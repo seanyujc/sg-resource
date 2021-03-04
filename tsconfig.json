@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "esnext",
+    "lib": ["ESNext", "DOM", "dom.iterable"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "downlevelIteration": true,
+    "declaration": true, 
+    "types": ["reflect-metadata"]
+  },
+  "exclude": ["node_modules", "dist"]
+}

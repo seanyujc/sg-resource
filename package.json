@@ -1,0 +1,17 @@
+{
+  "name": "sg-resource",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "types": "./dist/index.d.ts",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
