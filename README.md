@@ -1,4 +1,5 @@
-# sg-resource 是一个网络资源管理器
+# sg-resource 
+> 一个网络资源管理工具
 
 ## 开始使用
 
@@ -207,9 +208,21 @@ post: {
 
 #### # SGResource.ensureInitialized(apiConfig: IApiConfig, siteConfig: ISiteConfig, options?: IInterceptorsOptions): ProxyHttp;
 
-### http 请求代理
+可选项定义：
+```js
+IInterceptorsOptions {
+  /**
+   * 自定义请求头
+   */
+  headers?: () => Record<string, string | null>;
+  /**
+   * 返回值拦截处理
+   */
+  diagnoseResponse?: (config: AxiosResponse<any>) => AxiosResponse<any>;
+}
+```
 
-ProxyHttp 对象的实例方法：
+#### ProxyHttp 对象的实例方法：
 
 #### # post(apiKey: string; params?: { [key: string]: string }; pathParams?: string[]; options: { headers?: any } = {})
 
@@ -220,7 +233,7 @@ login(userName: string, password: string): Promise<any> {
     return this.proxyHttp.post("login", { userName, password });
 }
 ```
-- 方法定义
+- 实例方法定义
 ```ts
 /**
  * 代理get请求

@@ -2,7 +2,13 @@ import Axios, { AxiosResponse } from "../lib/axios/axios";
 import { ConfigAdapter } from "./config-adapter";
 
 export interface IInterceptorsOptions {
+  /**
+   * 自定义请求头
+   */
   headers?: () => Record<string, string | null>;
+  /**
+   * 返回值拦截处理
+   */
   diagnoseResponse?: (config: AxiosResponse<any>) => AxiosResponse<any>;
 }
 
