@@ -1,5 +1,6 @@
+/// <reference types="../global-sg" />
 import { ConfigAdapter } from "./config-adapter";
-import { createSingletonObject } from "./decorator";
+import { createSingletonObject, Autowired } from "./decorator";
 import { IInterceptorsOptions, ProxyHttp } from "./proxy-http";
 
 export abstract class SGResource {
@@ -17,4 +18,4 @@ export abstract class SGResource {
   }
 }
 
-export { ProxyHttp };
+export { ProxyHttp, createSingletonObject, Autowired };

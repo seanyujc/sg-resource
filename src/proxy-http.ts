@@ -126,6 +126,11 @@ export class ProxyHttp {
     }).then(transformResult);
   }
 
+  /**
+   * 通过网络协议获取一组文件对象
+   * @param urls 文件url列表
+   * @param options 可选参数，包括请求头参数
+   */
   getFiles(urls: string[], options: { headers?: any } = {}) {
     const promiseAll: Promise<File>[] = [];
     for (const url of urls) {

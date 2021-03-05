@@ -12,6 +12,8 @@ npm i sg-resource
 
 1. 创建配置站点配置和接口配置文件
 
+- 配置四个环境 DEV、TEST、UAT、PROD，使用 runtimes 字段选择其中一个环境。每个环境可配置多个服务地址。
+
 ```js
 // site.config.js
 (function () {
@@ -72,6 +74,8 @@ npm i sg-resource
 })();
 ```
 
+- 服务内接口列表配置，使用 host 字段选择目标服务。
+
 ```ts
 // api.config.ts
 export const apiConfig: IApiConfig<"support" | "user"> = {
@@ -82,7 +86,9 @@ export const apiConfig: IApiConfig<"support" | "user"> = {
 };
 ```
 
-2. 创建一个基础类
+2. 创建一个基础类并继承基础类
+
+- 创建基础类在构造方法中调用初始化方法初始化 sg-resource。
 
 ```js
 // base.serv.ts
@@ -119,7 +125,7 @@ export class BaseService {
 }
 ```
 
-3. 继承基础类
+- 继承基础类
 
 ```ts
 // user.serv.ts
@@ -139,6 +145,7 @@ export class UserService extends BaseService {
 
 - 主机配置管理
 - 接口配置管理
+- 初始化方法
 - http 请求代理
 
 ### 主机配置
@@ -194,9 +201,17 @@ post: {
 
 另有 get、put、delete、form、modules 配置与 post 类似就不做赘述
 
+### 初始化方法
+
+初始化并返回一个 ProxyHttp 对象实例。
+
+#### # SGResource.ensureInitialized(apiConfig: IApiConfig, siteConfig: ISiteConfig, options?: IInterceptorsOptions): ProxyHttp;
+
 ### http 请求代理
 
-post 
+ProxyHttp 对象的实例方法：
+
+#### # post(apiKey: string; params?: { [key: string]: string }; pathParams?: string[]; options: { headers?: any } = {})
 
 - 示例：
 
@@ -204,4 +219,60 @@ post
 login(userName: string, password: string): Promise<any> {
     return this.proxyHttp.post("login", { userName, password });
 }
+```
+- 方法定义
+```ts
+/**
+ * 代理get请求
+ * @param apiKey config定义的接口名
+ * @param params 请求参数
+ * @param pathParams 路径参数
+ * @param options 可选参数，包括请求头参数
+ */
+get(apiKey: string, params?: any, pathParams?: string[], options?: {
+    headers?: any;
+}): Promise<any>;
+/**
+ * 代理post请求
+ * @param apiKey config定义的接口
+ * @param data 请求参数
+ * @param pathParams 路径参数
+ * @param options 可选参数，包括请求头参数
+ */
+post(apiKey: string, data?: any, pathParams?: string[], options?: {
+    headers?: any;
+}): Promise<any>;
+/**
+ * 代理delete请求
+ * @param api config定义的接口
+ * @param pathParams 请求参数
+ */
+delete(apiKey: string, pathParams?: string[], options?: {
+    headers?: any;
+}): Promise<any>;
+/**
+ * 代理put请求
+ * @param apiKey config定义的接口名
+ * @param data 请求参数
+ */
+put(apiKey: string, data?: any, pathParams?: string[], options?: {
+    headers?: any;
+}): Promise<any>;
+/**
+ * 表单提交
+ * @param api 接口
+ * @param form 表单对象
+ */
+form(apiKey: string, form: FormData, pathParams?: string[], options?: {
+    headers?: any;
+}): Promise<any>;
+/**
+ * 通过网络协议获取一组文件对象
+ * @param urls 文件url列表
+ * @param options 可选参数，包括请求头参数
+ */
+getFiles(urls: string[], options?: {
+    headers?: any;
+}): Promise<File[]>;
+
 ```
