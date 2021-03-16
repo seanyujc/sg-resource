@@ -1,16 +1,27 @@
 {
   "name": "sg-resource",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "",
   "main": "./dist",
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seanyujc/sg-resource.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.js.map",
+    "dist/*.d.ts",
+    "lib/axios/axios.js",
+    "lib/axios/axios.d.ts"
+  ],
   "dependencies": {
     "reflect-metadata": "^0.1.13"
   }

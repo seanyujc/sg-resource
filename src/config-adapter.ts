@@ -1,4 +1,5 @@
 import { Method } from "../lib/axios/axios";
+import { IApi, IApiConfig, ISite, ISiteConfig } from "./index";
 
 export class Site implements ISite {
   remote = {
