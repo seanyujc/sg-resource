@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "esnext",
-    "lib": ["ESNext", "DOM", "dom.iterable"],
+    "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,

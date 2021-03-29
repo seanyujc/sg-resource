@@ -1,6 +1,7 @@
+import { IInterceptorsOptions } from "./base-proxy-http";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
-import { IInterceptorsOptions, ProxyHttp } from "./proxy-http";
+import {  ProxyHttp } from "./proxy-http";
 
 export interface IHost {
   url: string;
@@ -48,6 +49,10 @@ export interface ISite {
      */
     assetsPath?: string;
   };
+  /**
+   * 自定义
+   */
+  custom?: Record<string, any>;
   /**
    * 第三方登录入口
    */
