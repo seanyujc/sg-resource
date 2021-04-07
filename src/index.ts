@@ -1,7 +1,7 @@
 import { IInterceptorsOptions } from "./base-proxy-http";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
-import {  ProxyHttp } from "./proxy-http";
+import { ProxyHttp } from "./proxy-http";
 
 export interface IHost {
   url: string;
@@ -91,6 +91,8 @@ export interface IApiConfig<T = string> {
   modules?: Record<string, IApiConfig>;
 }
 declare const __sg_site_config__: ISiteConfig;
+
+declare const wx: any;
 
 export abstract class SGResource {
   static ensureInitialized(
