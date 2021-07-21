@@ -5,7 +5,7 @@
   "main": "./dist",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,10 @@
   "dependencies": {
     "reflect-metadata": "^0.1.13",
     "typescript": "^4.2.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3"
   }
 }

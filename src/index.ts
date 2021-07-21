@@ -71,10 +71,10 @@ export interface ISite {
  */
 export interface ISiteConfig {
   DEV: ISite;
-  TEST: ISite;
+  SIT: ISite;
   UAT: ISite;
   PROD: ISite;
-  runtimes: "DEV" | "TEST" | "UAT" | "PROD";
+  runtimes: "DEV" | "SIT" | "UAT" | "PROD";
 }
 
 export interface IApi<T = string> {

@@ -31,7 +31,7 @@ npm i sg-resource
         publicPath: "/",
       },
     },
-    TEST: {
+    SIT: {
       remote: {
         hosts: {
           user: { url: "//10.0.0.1:8080/user-api", cors: true },
