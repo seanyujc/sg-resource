@@ -1,5 +1,4 @@
 import Axios, { AxiosResponse } from "../lib/axios/axios";
-import { BaseProxyHttp, transformResult } from "./base-proxy-http";
 import { ConfigAdapter } from "./config-adapter";
 export interface IInterceptorsOptions {
   /**
@@ -145,4 +144,7 @@ export class ProxyHttp  {
     }
     return Promise.all(promiseAll);
   }
+}
+export function transformResult(response: AxiosResponse<any>) {
+  return Promise.resolve(response.data);
 }

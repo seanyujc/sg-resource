@@ -15,17 +15,20 @@
         "src/*"
       ]
     },
+    "incremental": true,
+    "skipLibCheck": true,
     "downlevelIteration": true,
     "declaration": true,
     "types": [
-      "reflect-metadata"
+      "reflect-metadata",
+      "jest"
     ],
     "typeRoots": [
+      "node_modules/@types",
       "./typeings"
     ]
   },
   "exclude": [
-    "node_modules",
     "dist"
   ]
 }
