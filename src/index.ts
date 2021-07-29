@@ -1,8 +1,7 @@
-import { AxiosResponse } from "lib/axios/axios";
+import { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
 import { ProxyHttp } from "./proxy-http";
-
 export interface IHost {
   url: string;
   cors?: boolean;
@@ -11,6 +10,9 @@ export interface IHost {
  * 某一个站点配置
  */
 export interface ISite {
+  /**
+   * 环境标识
+   */
   env: "DEV" | "SIT" | "UAT" | "PROD";
   /**
    * 远端服务器配置
@@ -44,7 +46,7 @@ export interface ISite {
     /**
      * 发布路径
      */
-    publicPath: string;
+    publicPath?: string;
     /**
      * 附件路径，可以是本地服务目录，或远程地址
      */
@@ -66,15 +68,7 @@ export interface ISite {
    * 接口加密盐
    */
   salt?: string;
-  /**
-   * 当前在用
-   */
-  runtimes?: true;
 }
-/**
- * 四个环境站点配置
- */
-export interface ISiteConfig extends Array<ISite> {}
 
 export interface IApi<T = string> {
   host: T;
@@ -89,9 +83,11 @@ export interface IApiConfig<T = string> {
   form?: Record<string, IApi<T>>;
   modules?: Record<string, IApiConfig>;
 }
-declare const __sg_site_config__: ISiteConfig;
 
-declare const wx: any;
+export class ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
+  system: ISite[] = [];
+  runtime: T = "DEV" as any;
+}
 
 /**
  * 自定义拦截配置
@@ -108,7 +104,7 @@ export interface IInterceptorsOptions {
 }
 export abstract class SGResource {
   static ensureInitialized(
-    siteConfig: ISiteConfig,
+    siteConfig: ISiteConfig<any>,
     apiConfig: IApiConfig,
     options?: IInterceptorsOptions
   ): ProxyHttp {

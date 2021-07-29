@@ -2,9 +2,11 @@
   "name": "sg-resource",
   "version": "1.0.5",
   "description": "",
-  "main": "./dist",
+  "main": "./dist/index.js",
   "scripts": {
+    "dev": "tsc -w",
     "build": "tsc",
+    "link": "npm unlink && npm link",
     "test": "jest"
   },
   "repository": {
@@ -20,15 +22,17 @@
     "dist/**/*.js.map",
     "dist/*.d.ts",
     "lib/axios/axios.js",
-    "lib/axios/axios.d.ts"
+    "lib/axios/axios.d.ts",
+    "typings/**/*.d.ts"
   ],
   "dependencies": {
-    "reflect-metadata": "^0.1.13",
-    "typescript": "^4.2.3"
+    "axios": "^0.21.1",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "jest": "^27.0.6",
-    "ts-jest": "^27.0.3"
+    "ts-jest": "^27.0.3",
+    "typescript": "^4.2.3"
   }
 }

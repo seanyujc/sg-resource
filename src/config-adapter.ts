@@ -1,4 +1,4 @@
-import { Method } from "../lib/axios/axios";
+import { Method } from "axios";
 import { IApi, IApiConfig, ISite, ISiteConfig } from "./index";
 
 export class Site implements ISite {
@@ -12,7 +12,7 @@ export class Site implements ISite {
 export class ConfigAdapter {
   siteInfo: ISite | undefined;
   constructor(private siteConfig: ISiteConfig, private apiConfig: IApiConfig) {
-    this.siteInfo = siteConfig.find((ele) => ele.runtimes) || new Site();
+    this.siteInfo = siteConfig.system.find((ele) => ele.env === siteConfig.runtime);
   }
 
   getRequestUrl(method: Method, apiKey: string, pathParams: string[] = []) {

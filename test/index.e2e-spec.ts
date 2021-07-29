@@ -1,14 +1,19 @@
-import { IApiConfig, ISiteConfig, SGResource } from "@/index";
-const siteConfig: ISiteConfig = [
-  {
-    env: "DEV",
-    remote: {
-      hosts: { baidu: "https://www.hao123.com" },
-    },
-    local: { publicPath: "/" },
-  },
-];
+import { IApiConfig, ISite, ISiteConfig, SGResource } from "../src/index";
 
+const SITE_CONFIG: ISiteConfig = {
+  system: [
+    {
+      env: "DEV",
+      remote: {
+        hosts: {
+          baidu: "http://baidu.com/web-api",
+        },
+      },
+      local: {},
+    },
+  ],
+  runtime: "DEV",
+};
 const apiConfig: IApiConfig<"baidu"> = {
   get: {
     citymenu: { path: "/api/citymenu?", host: "baidu" },
@@ -17,5 +22,5 @@ const apiConfig: IApiConfig<"baidu"> = {
 };
 
 describe("初始化", () => {
-  SGResource.ensureInitialized(siteConfig, apiConfig);
+  SGResource.ensureInitialized(SITE_CONFIG, apiConfig);
 });

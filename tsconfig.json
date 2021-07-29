@@ -2,33 +2,17 @@
   "compilerOptions": {
     "target": "ES5",
     "module": "esnext",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "sourceMap": true,
     "outDir": "./dist",
     "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
     "incremental": true,
     "skipLibCheck": true,
+    "moduleResolution": "Node",
     "downlevelIteration": true,
     "declaration": true,
-    "types": [
-      "reflect-metadata",
-      "jest"
-    ],
-    "typeRoots": [
-      "node_modules/@types",
-      "./typeings"
-    ]
+    "types": ["reflect-metadata", "jest"],
+    "typeRoots": ["node_modules/@types", "./typeings"]
   },
-  "exclude": [
-    "dist"
-  ]
+  "exclude": ["dist", "test"]
 }

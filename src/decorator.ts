@@ -3,7 +3,7 @@ import "reflect-metadata";
 export const singletonObjects: any[] = [];
 
 /**
- * create singleton Object
+ * Create singleton Instance of Object
  * @param Type Object Type
  * @param args Parameters of the constructor
  */
@@ -28,6 +28,11 @@ export function createSingletonObject<T = any>(Type: T | any, ...args: any): T {
   }
 }
 
+/**
+ * Decorator inject Instance of Object
+ * @param target 
+ * @param key 
+ */
 export function Autowired(target: any, key: string) {
   const type = Reflect.getMetadata("design:type", target, key);
   let n: any = createSingletonObject(type);

@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from "../lib/axios/axios";
+import Axios, { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 export interface IInterceptorsOptions {
   /**
@@ -40,7 +40,7 @@ export class ProxyHttp  {
 
   /**
    * 代理get请求
-   * @param apiKey config定义的接口名
+   * @param apiKey IApiConfig.get[apiKey],定义接口Key
    * @param params 请求参数
    * @param pathParams 路径参数
    * @param options 可选参数，包括请求头参数
@@ -59,7 +59,7 @@ export class ProxyHttp  {
 
   /**
    * 代理post请求
-   * @param apiKey config定义的接口
+   * @param apiKey IApiConfig.get[apiKey],定义接口Key
    * @param data 请求参数
    * @param pathParams 路径参数
    * @param options 可选参数，包括请求头参数
@@ -78,7 +78,7 @@ export class ProxyHttp  {
 
   /**
    * 代理delete请求
-   * @param api config定义的接口
+   * @param api IApiConfig.get[apiKey],定义接口Key
    * @param pathParams 请求参数
    */
   delete(
@@ -94,7 +94,7 @@ export class ProxyHttp  {
 
   /**
    * 代理put请求
-   * @param apiKey config定义的接口名
+   * @param apiKey IApiConfig.get[apiKey],定义接口Key
    * @param data 请求参数
    */
   put(
@@ -111,7 +111,7 @@ export class ProxyHttp  {
 
   /**
    * 表单提交
-   * @param api 接口
+   * @param apiKey IApiConfig.get[apiKey],定义接口Key
    * @param form 表单对象
    */
   form(
