@@ -2,8 +2,14 @@ import { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
 import { ProxyHttp } from "./proxy-http";
+/**
+ * 主机信息对象
+ */
 export interface IHost {
   url: string;
+  /**
+   * 配合web server解决跨域，地址的域信息部分将被替换为客户端地址。
+   */
   cors?: boolean;
 }
 /**

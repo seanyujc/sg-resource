@@ -10,7 +10,7 @@
 npm i sg-resource
 ```
 
-### 使用
+### 信息管理
 
 1. 创建配置站点配置和接口配置文件
 
@@ -66,7 +66,7 @@ export interface ISite {
      */
     hosts: Record<string, IHost | string>;
     /**
-     * 默认协议，服务器地址不设置可继承该设置
+     * 默认协议，服务器地址中不设置可继承该设置
      */
     protocol?: string;
   };
@@ -112,6 +112,16 @@ export interface ISite {
    */
   salt?: string;
 }
+/**
+ * 主机信息对象
+ * */
+interface IHost {
+  url: string;
+  /**
+   * 配合web server解决跨域，地址的域信息部分将被替换为客户端地址。
+   */
+  cors?: boolean;
+}
 ```
 
 - 接口配置定义，使用 host 字段选择服务目标（使用泛型约束）。
@@ -144,6 +154,7 @@ export class BaseService {
       system: [],
       runtime: "DEV",
     };
+    // 通过全局方法获取服务主机信息
     if (typeof getSiteConfig !== "undefined") {
       siteConfig = getSiteConfig();
     }
