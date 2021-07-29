@@ -1,6 +1,6 @@
 # sg-resource
 
-> 一个网络资源管理工具。使用 HTTP 协议请求，支持 Vite、webpack、微信小程序、支持 SSR。
+> 一个网络资源管理工具。使用 HTTP 协议请求，支持Vue、React，支持 SSR。
 
 ## 开始使用
 
