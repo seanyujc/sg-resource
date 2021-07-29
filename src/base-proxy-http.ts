@@ -1,4 +1,4 @@
-import Axios, { AxiosResponse } from "../lib/axios/axios";
+import Axios, { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 
 export interface IInterceptorsOptions {

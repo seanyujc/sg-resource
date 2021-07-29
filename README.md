@@ -1,5 +1,6 @@
-# sg-resource 
-> 一个网络资源管理工具。使用HTTP协议请求，支持Vite、webpack、微信小程序、支持SSR。
+# sg-resource
+
+> 一个网络资源管理工具。使用 HTTP 协议请求，支持 Vite、webpack、微信小程序、支持 SSR。
 
 ## 开始使用
 
@@ -13,73 +14,111 @@ npm i sg-resource
 
 1. 创建配置站点配置和接口配置文件
 
-- 配置四个环境 DEV、TEST、UAT、PROD，使用 runtimes 字段选择其中一个环境。每个环境可配置多个服务地址。
+- system配置环境 DEV、TEST、UAT、PROD等，"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。每个环境可配置多个服务地址。
 
 ```js
 // site.config.js
-(function () {
-  var SITE_CONFIG = {
-    DEV: {
+const SITE_CONFIG = {
+  system: [
+    {
+      env: "DEV",
       remote: {
         hosts: {
-          user: { url: "//10.0.0.1:8080/user-api", cors: true },
-          support: "https://10.0.0.1:8080/support-api",
+          user: "http://127.0.0.1:8080/web-api",
         },
-        protocol: "http:",
       },
       local: {
-        publicPath: "/",
+        port: 3000,
       },
     },
-    SIT: {
-      remote: {
-        hosts: {
-          user: { url: "//10.0.0.1:8080/user-api", cors: true },
-          support: "https://10.0.0.1:8080/support-api",
-        },
-        protocol: "http:",
-      },
-      local: {
-        publicPath: "/",
-      },
-    },
-    UAT: {
-      remote: {
-        hosts: {
-          user: { url: "//10.0.0.1:8080/user-api", cors: true },
-          support: "https://10.0.0.1:8080/support-api",
-        },
-        protocol: "http:",
-      },
-      local: {
-        publicPath: "/",
-      },
-    },
-    PROD: {
-      remote: {
-        hosts: {
-          user: { url: "//10.0.0.1:8080/user-api", cors: true },
-          support: "https://10.0.0.1:8080/support-api",
-        },
-        protocol: "https:",
-      },
-      local: {
-        publicPath: "/",
-      },
-    },
-    runtimes: "DEV",
+  ],
+  runtime: "DEV",
+};
+
+// 通过全局get方法导出
+if (typeof window === "object") {
+  window.getSiteConfig = () => SITE_CONFIG;
+}
+if (typeof global === "object") {
+  global.getSiteConfig = () => SITE_CONFIG;
+}
+if (typeof module === "object") {
+  module.exports = { SITE_CONFIG };
+}
+
+```
+- system配置的详情
+```ts
+/**
+ * 某一个站点配置
+ */
+export interface ISite {
+  /**
+   * 环境标识
+   */
+  env: "DEV" | "SIT" | "UAT" | "PROD";
+  /**
+   * 远端服务器配置
+   */
+  remote: {
+    /**
+     * 服务器地址列表
+     */
+    hosts: Record<string, IHost | string>;
+    /**
+     * 默认协议，服务器地址不设置可继承该设置
+     */
+    protocol?: string;
   };
-  if (typeof window === "object") {
-    window.getSiteConfig = () => SITE_CONFIG;
-  }
-})();
+  /**
+   * 本地服务器配置
+   */
+  local: {
+    /**
+     * 协议
+     */
+    protocol?: string;
+    /**
+     * 主机域名或ip地址
+     */
+    hostname?: string;
+    /**
+     * 端口占用
+     */
+    port?: number;
+    /**
+     * 发布路径
+     */
+    publicPath?: string;
+    /**
+     * 附件路径，可以是本地服务目录，或远程地址
+     */
+    assetsPath?: string;
+  };
+  /**
+   * 自定义
+   */
+  custom?: Record<string, any>;
+  /**
+   * 第三方登录入口
+   */
+  entrance?: string;
+  /**
+   * 统计服务地址
+   */
+  sensor?: string;
+  /**
+   * 接口加密盐
+   */
+  salt?: string;
+}
 ```
 
-- 服务内接口列表配置，使用 host 字段选择目标服务。
+- 接口配置定义，使用 host 字段选择服务目标（使用泛型约束）。
 
 ```ts
 // api.config.ts
-export const apiConfig: IApiConfig<"support" | "user"> = {
+export const apiConfig: IApiConfig<"user"> = {
   post: {
     login: { host: "user", path: "/login" },
   },
@@ -90,43 +129,51 @@ export const apiConfig: IApiConfig<"support" | "user"> = {
 2. 创建一个基础类并继承基础类
 
 - 创建基础类在构造方法中调用初始化方法初始化 sg-resource。
+- 自定义 ResultInfo 对象用来描述接口返回数据的包装类 
 
 ```js
 // base.serv.ts
-import { apiConfig } from "./api.config.ts";
-import { SGResource } from "sg-resource";
+import { apiConfig } from "@/app/config/api.config";
+import { ISiteConfig, ProxyHttp, SGResource } from "sg-resource";
+import { ResultInfo } from "../domain/ResultInfo";
 
 export class BaseService {
   proxyHttp: ProxyHttp;
   constructor() {
-    this.proxyHttp = SGResource.ensureInitialized(
-      apiConfig,
-      window.getSiteConfig(),
-      {
-        headers: () => {
-          const headers: any = {};
-          const token = localStorage.getItem(HEADER_TOKEN) || "";
-          if (token) {
-            headers["access-token"] = token;
+    let siteConfig: ISiteConfig = {
+      system: [],
+      runtime: "DEV",
+    };
+    if (typeof getSiteConfig !== "undefined") {
+      siteConfig = getSiteConfig();
+    }
+
+    this.proxyHttp = SGResource.ensureInitialized(siteConfig, apiConfig, {
+      headers: () => {
+        const headers: any = {};
+        let token = "88";
+
+        if (token) {
+          headers["accessToken"] = token;
+        }
+        return headers;
+      },
+      diagnoseResponse: (config) => {
+        if (config.data) {
+          const result: ResultInfo = config.data;
+
+          if (result.status === 0) {
+            config.data = result.data;
           }
-          return headers;
-        },
-        diagnoseResponse: (config) => {
-          if (config.data) {
-            const result: ResultInfo = config.data;
-            if (result.status === 0) {
-              config.data = result.data;
-            }
-          }
-          return config;
-        },
-      }
-    );
+        }
+        return config;
+      },
+    });
   }
 }
 ```
 
-- 继承基础类
+- 继承基础类，使用 this.proxyHttp.[method] 来访问接口
 
 ```ts
 // user.serv.ts
@@ -209,6 +256,7 @@ post: {
 #### # SGResource.ensureInitialized(apiConfig: IApiConfig, siteConfig: ISiteConfig, options?: IInterceptorsOptions): ProxyHttp;
 
 可选项定义：
+
 ```js
 IInterceptorsOptions {
   /**
@@ -233,7 +281,9 @@ login(userName: string, password: string): Promise<any> {
     return this.proxyHttp.post("login", { userName, password });
 }
 ```
+
 - 实例方法定义
+
 ```ts
 /**
  * 代理get请求
