@@ -84,9 +84,9 @@ export interface IApiConfig<T = string> {
   modules?: Record<string, IApiConfig>;
 }
 
-export class ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
-  system: ISite[] = [];
-  runtime: T = "DEV" as any;
+export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
+  system: ISite[];
+  runtime: T;
 }
 
 /**
