@@ -199,6 +199,14 @@ export class UserService extends BaseService {
   }
 }
 ```
+### 使用service类
+```ts
+const userService = new UserService();
+userService.login("sean", "666666").then(data=>{
+  // store info of user and to home
+}).catch(console.log);
+```
+
 
 ## 接口文档
 
