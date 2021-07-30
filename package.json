@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/seanyujc/sg-resource.git"
   },
-  "keywords": ["service", "http", "resource"],
+  "keywords": ["service", "http", "resource", "network", "web"],
   "author": "",
   "license": "ISC",
   "types": "./dist/index.d.ts",
