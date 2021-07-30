@@ -154,7 +154,7 @@ const config = siteConfig.system.find(
 
 ```
 
-### <a name="接口配置管理">接口配置管理</a>
+### <a name="api_mgt">接口配置管理</a>
 使用 host 字段选择服务目标（使用泛型约束）
 
 ```ts
@@ -215,7 +215,7 @@ export class BaseService {
 }
 ```
 
-- 继承基础类后使用this.proxyHttp对象中的方法得到服务能力，参数apiKey对应<a href="#接口配置管理">接口配置管理</a>中的key定义
+- 继承基础类后使用this.proxyHttp对象中的方法得到服务能力，参数apiKey对应<a href="#api_mgt">接口配置管理</a>中的key定义
 
 ```ts
 // user.serv.ts

@@ -1,6 +1,6 @@
 {
   "name": "sg-resource",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "https://github.com/seanyujc/sg-resource.git"
   },
-  "keywords": [],
+  "keywords": ["service", "http", "resource"],
   "author": "",
   "license": "ISC",
   "types": "./dist/index.d.ts",
