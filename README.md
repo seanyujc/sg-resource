@@ -12,9 +12,9 @@ npm i sg-resource
 
 ### 信息管理
 
-1. 创建配置站点配置和接口配置文件
+1. 创建服务站点配置
 
-- system配置环境 DEV、TEST、UAT、PROD等，"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。每个环境可配置多个服务地址。
+- system字段可配置多个环境（DEV、TEST、UAT、PROD等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过hosts字典配置多个服务地址，各环境hosts字典的key保持一致。
 
 ```js
 // site.config.js
@@ -47,7 +47,7 @@ if (typeof module === "object") {
 }
 
 ```
-- system配置的详情
+- system元素各字段配置的详情
 ```ts
 /**
  * 某一个站点配置
@@ -124,7 +124,10 @@ interface IHost {
 }
 ```
 
-- 接口配置定义，使用 host 字段选择服务目标（使用泛型约束）。
+- site.config.js引入方式有多种
+
+
+2. 接口配置定义，使用 host 字段选择服务目标（使用泛型约束）。
 
 ```ts
 // api.config.ts
@@ -136,7 +139,7 @@ export const apiConfig: IApiConfig<"user"> = {
 };
 ```
 
-2. 创建一个基础类并继承基础类
+3. 创建一个基础类并继承基础类
 
 - 创建基础类在构造方法中调用初始化方法初始化 sg-resource。
 - 自定义 ResultInfo 对象用来描述接口返回数据的包装类 
@@ -207,6 +210,26 @@ userService.login("sean", "666666").then(data=>{
 }).catch(console.log);
 ```
 
+### 在ts中你可能需要添加类型定义
+```ts
+// global.d.ts
+import { ISiteConfig } from "sg-resource";
+
+declare global {
+  interface Window {
+    getSiteConfig?: () => ISiteConfig;
+  }
+  const getSiteConfig: (() => ISiteConfig) | undefined;  
+
+   namespace NodeJS {
+    interface Global {
+        getSiteConfig?: () => ISiteConfig;
+    }
+  }
+}
+
+
+```
 
 ## 接口文档
 
