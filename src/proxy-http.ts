@@ -1,10 +1,11 @@
-import Axios, { AxiosResponse } from "axios";
+import Axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 export interface IInterceptorsOptions {
   /**
    * 自定义请求头
    */
   headers?: () => Record<string, string | null>;
+  onRequest?: (config: AxiosRequestConfig) => void;
   /**
    * 返回值拦截处理
    */
@@ -24,6 +25,9 @@ export class ProxyHttp {
         if (options.headers) {
           _headers = options.headers();
         }
+        if (options.onRequest) {
+          options.onRequest(config);
+        }
       }
       config.headers = { ...config.headers, ..._headers };
       if (process.env.NODE_LOG === "open") {
@@ -36,21 +40,21 @@ export class ProxyHttp {
       }
       return config;
     });
-    Axios.interceptors.response.use((config) => {
+    Axios.interceptors.response.use((response) => {
       if (process.env.NODE_LOG === "open") {
         console.log(
           "返回结果：\n",
           "----------------------start---------------------\n",
-          config,
+          response,
           "\n---------------------end------------------------",
         );
       }
       if (options) {
         if (options.diagnoseResponse) {
-          config = options.diagnoseResponse(config);
+          response = options.diagnoseResponse(response);
         }
       }
-      return config;
+      return response;
     });
   }
 
