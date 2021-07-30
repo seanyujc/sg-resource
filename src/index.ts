@@ -100,7 +100,7 @@ export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
  */
 export interface IInterceptorsOptions {
   /**
-   * 自定义请求头
+   * 全局自定义请求头
    */
   headers?: () => Record<string, string | null>;
   /**
