@@ -8,9 +8,9 @@ export interface IInterceptorsOptions {
   /**
    * 返回值拦截处理
    */
-  diagnoseResponse?: (config: AxiosResponse<any>) => AxiosResponse<any>;
+  diagnoseResponse?: <T = any>(config: AxiosResponse<T>) => AxiosResponse<T>;
 }
-export class ProxyHttp  {
+export class ProxyHttp {
   constructor(
     protected configAdapter: ConfigAdapter,
     options?: IInterceptorsOptions,
@@ -19,16 +19,32 @@ export class ProxyHttp  {
   }
   initInterceptors(options?: IInterceptorsOptions) {
     Axios.interceptors.request.use((config) => {
-      let _headers: any = {};
+      let _headers = {} as any;
       if (options) {
         if (options.headers) {
           _headers = options.headers();
         }
       }
       config.headers = { ...config.headers, ..._headers };
+      if (process.env.NODE_LOG === "open") {
+        console.log(
+          "发起请求：\n",
+          "----------------------start---------------------\n",
+          config,
+          "\n---------------------end------------------------",
+        );
+      }
       return config;
     });
     Axios.interceptors.response.use((config) => {
+      if (process.env.NODE_LOG === "open") {
+        console.log(
+          "返回结果：\n",
+          "----------------------start---------------------\n",
+          config,
+          "\n---------------------end------------------------",
+        );
+      }
       if (options) {
         if (options.diagnoseResponse) {
           config = options.diagnoseResponse(config);

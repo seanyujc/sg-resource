@@ -112,12 +112,12 @@ export abstract class SGResource {
   static ensureInitialized(
     siteConfig: ISiteConfig<any>,
     apiConfig: IApiConfig,
-    options?: IInterceptorsOptions
+    options?: IInterceptorsOptions,
   ): ProxyHttp {
     const confingAdapter = createSingletonObject<ConfigAdapter>(
       ConfigAdapter,
       siteConfig,
-      apiConfig
+      apiConfig,
     );
     return createSingletonObject<ProxyHttp>(ProxyHttp, confingAdapter, options);
   }

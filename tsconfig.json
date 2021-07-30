@@ -11,7 +11,6 @@
     "moduleResolution": "Node",
     "downlevelIteration": true,
     "declaration": true,
-    "types": ["reflect-metadata", "jest"],
     "typeRoots": ["node_modules/@types", "./typeings"]
   },
   "exclude": ["dist", "test"]

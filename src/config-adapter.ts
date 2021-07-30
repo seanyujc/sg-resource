@@ -12,10 +12,16 @@ export class Site implements ISite {
 export class ConfigAdapter {
   siteInfo: ISite | undefined;
   constructor(private siteConfig: ISiteConfig, private apiConfig: IApiConfig) {
-    this.siteInfo = siteConfig.system.find((ele) => ele.env === siteConfig.runtime);
+    this.siteInfo = siteConfig.system.find(
+      (ele) => ele.env === siteConfig.runtime,
+    );
   }
 
-  getRequestUrl(method: Method, apiKey: string, pathParams: string[] = []) {
+  getRequestUrl(
+    method: Method,
+    apiKey: string,
+    pathParams: string[] = [],
+  ): string {
     if (!this.siteInfo) {
       return apiKey;
     }

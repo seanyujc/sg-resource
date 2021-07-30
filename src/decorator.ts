@@ -30,12 +30,12 @@ export function createSingletonObject<T = any>(Type: T | any, ...args: any): T {
 
 /**
  * Decorator inject Instance of Object
- * @param target 
- * @param key 
+ * @param target
+ * @param key
  */
-export function Autowired(target: any, key: string) {
+export function Autowired(target: any, key: string): void {
   const type = Reflect.getMetadata("design:type", target, key);
-  let n: any = createSingletonObject(type);
+  const n = createSingletonObject(type);
   const getter = () => {
     if (n) {
       return n;
