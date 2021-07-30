@@ -2,17 +2,16 @@
 
 > 一个网络资源管理工具。使用 HTTP 协议请求，支持Vue、React，支持 SSR。
 
-## 开始使用
 
-### 安装
+## 安装
 
 ```bash
 npm i sg-resource
 ```
 
-### 信息管理
+## 信息管理
 
-1. 创建服务站点配置
+### 服务站点管理
 
 - system字段可配置多个环境（DEV、TEST、UAT、PROD等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过hosts字典配置多个服务地址，各环境hosts字典的key保持一致。
 
@@ -124,10 +123,39 @@ interface IHost {
 }
 ```
 
-- site.config.js引入方式有多种
+- site.config.js引入方式：
+1) 在CSR当作静态资源引入
+```html
+<script src="/public/site.config.js"></script>
+```
+2) 在SSR模块式引入
+```js
+// js
+const { SITE_CONFIG } = require("./config/site.config");
+const currentConfig = SITE_CONFIG.system.find(
+  (item) => item.env === SITE_CONFIG.runtime,
+);
+```
+```ts
+// ts
+import "../config/site.config";
+let siteConfig: ISiteConfig = {
+  system: [],
+  runtime: "DEV"
+};
 
+if (getSiteConfig) {
+  siteConfig = getSiteConfig();
+}
 
-2. 接口配置定义，使用 host 字段选择服务目标（使用泛型约束）。
+const config = siteConfig.system.find(
+  (item) => item.env === siteConfig.runtime,
+);
+
+```
+
+### <a name="接口配置管理">接口配置管理</a>
+使用 host 字段选择服务目标（使用泛型约束）
 
 ```ts
 // api.config.ts
@@ -139,10 +167,10 @@ export const apiConfig: IApiConfig<"user"> = {
 };
 ```
 
-3. 创建一个基础类并继承基础类
+### 访问接口
+创建一个基础类并继承基础类
 
-- 创建基础类在构造方法中调用初始化方法初始化 sg-resource。
-- 自定义 ResultInfo 对象用来描述接口返回数据的包装类 
+- 创建基础类在构造方法中调用初始化方法初始化 sg-resource，自定义 ResultInfo 对象用来描述接口返回数据的包装类 
 
 ```js
 // base.serv.ts
@@ -187,7 +215,7 @@ export class BaseService {
 }
 ```
 
-- 继承基础类，使用 this.proxyHttp.[method] 来访问接口
+- 继承基础类后使用this.proxyHttp对象中的方法得到服务能力，参数apiKey对应<a href="#接口配置管理">接口配置管理</a>中的key定义
 
 ```ts
 // user.serv.ts
@@ -204,6 +232,7 @@ export class UserService extends BaseService {
 ```
 ### 使用service类
 ```ts
+// 在你需要的
 const userService = new UserService();
 userService.login("sean", "666666").then(data=>{
   // store info of user and to home
