@@ -16,8 +16,10 @@ npm i sg-resource
 
 ```js
 // site.config.js
+// @ts-check
+/// <reference path="../typings/global.d.ts" />
 (function() {
-  const SITE_CONFIG = {
+  const /** @type {import("sg-resource").ISiteConfig} */ SITE_CONFIG = {
     system: [{
       env: "DEV",
       remote: {
@@ -25,9 +27,17 @@ npm i sg-resource
           user: "http://127.0.0.1:8080/web-api",
         },
       },
-      local: {
-        port: 3000,
+      local: {},
+      entrance: "",
+    }, {
+      env: "SIT",
+      remote: {
+        hosts: {
+          user: "http://127.0.0.1:8080/web-api",
+        },
       },
+      local: {},
+      entrance: "",
     }, ],
     runtime: "DEV",
   };
@@ -45,7 +55,7 @@ npm i sg-resource
     };
   }
 
-})()
+})();
 ```
 
 * system元素各字段配置的详情
