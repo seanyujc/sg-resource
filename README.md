@@ -12,7 +12,7 @@ npm i sg-resource
 
 ### 服务站点管理
 
-* system字段可配置多个环境（DEV、TEST、UAT、PROD等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过hosts字典配置多个服务地址，各环境hosts字典的key保持一致。
+* system字段可配置多个环境（DEV、SIT、UAT、PROD等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过hosts字典配置多个服务地址，各环境hosts字典的key保持一致。
 
 ```js
 // site.config.js

@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
-import { ProxyHttp } from "./proxy-http";
+import { IInterceptorsOptions, ProxyHttp } from "./proxy-http";
 /**
  * 主机信息对象
  */
@@ -95,24 +95,11 @@ export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
   runtime: T;
 }
 
-/**
- * 自定义拦截配置
- */
-export interface IInterceptorsOptions {
-  /**
-   * 全局自定义请求头
-   */
-  headers?: () => Record<string, string | null>;
-  /**
-   * 返回值拦截处理
-   */
-  diagnoseResponse?: (config: AxiosResponse<any>) => AxiosResponse<any>;
-}
 export abstract class SGResource {
-  static ensureInitialized(
+  static ensureInitialized<T = AxiosResponse<any>>(
     siteConfig: ISiteConfig<any>,
     apiConfig: IApiConfig,
-    options?: IInterceptorsOptions,
+    options?: IInterceptorsOptions<T>,
   ): ProxyHttp {
     const confingAdapter = createSingletonObject<ConfigAdapter>(
       ConfigAdapter,

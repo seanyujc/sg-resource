@@ -1,15 +1,19 @@
 import Axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
-export interface IInterceptorsOptions {
+
+/**
+ * 自定义拦截配置
+ */
+export interface IInterceptorsOptions<T = AxiosResponse<any>> {
   /**
    * 自定义请求头
    */
   headers?: () => Record<string, string | null>;
-  onRequest?: (config: AxiosRequestConfig) => void;
+  onRequest?: (config: AxiosRequestConfig) => Promise<AxiosRequestConfig>;
   /**
    * 返回值拦截处理
    */
-  diagnoseResponse?: <T = any>(config: AxiosResponse<T>) => AxiosResponse<T>;
+  diagnoseResponse?: (config: T) => Promise<T>;
 }
 export class ProxyHttp {
   constructor(
@@ -19,14 +23,14 @@ export class ProxyHttp {
     this.initInterceptors(options);
   }
   initInterceptors(options?: IInterceptorsOptions) {
-    Axios.interceptors.request.use((config) => {
+    Axios.interceptors.request.use(async (config) => {
       let _headers = {} as any;
       if (options) {
         if (options.headers) {
           _headers = options.headers();
         }
         if (options.onRequest) {
-          options.onRequest(config);
+          config = await options.onRequest(config);
         }
       }
       config.headers = { ...config.headers, ..._headers };
@@ -40,7 +44,7 @@ export class ProxyHttp {
       }
       return config;
     });
-    Axios.interceptors.response.use((response) => {
+    Axios.interceptors.response.use(async (response) => {
       if (process.env.NODE_LOG === "open") {
         console.log(
           "返回结果：\n",
@@ -51,7 +55,7 @@ export class ProxyHttp {
       }
       if (options) {
         if (options.diagnoseResponse) {
-          response = options.diagnoseResponse(response);
+          response = await options.diagnoseResponse(response);
         }
       }
       return response;

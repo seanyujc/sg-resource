@@ -2,10 +2,11 @@
   "name": "sg-resource",
   "version": "1.0.11",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
   "scripts": {
-    "dev": "tsc -w",
-    "build": "tsc",
+    "dev": "rollup -c -w",
+    "build": "cross-env NODE_ENV=production rollup -c",
     "link": "npm unlink && npm link",
     "test": "jest"
   },
@@ -22,7 +23,7 @@
   ],
   "author": "",
   "license": "ISC",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/es/index.d.ts",
   "files": [
     "dist/**/*.js",
     "dist/**/*.js.map",
@@ -43,6 +44,8 @@
     "eslint-plugin-prettier": "^3.4.0",
     "jest": "^27.0.6",
     "prettier": "^2.3.2",
+    "rollup": "^2.56.2",
+    "rollup-plugin-typescript2": "^0.30.0",
     "ts-jest": "^27.0.3",
     "typescript": "^4.2.3"
   }
