@@ -210,16 +210,7 @@ import {
 export class BaseService {
   proxyHttp: ProxyHttp;
   constructor() {
-    let siteConfig: ISiteConfig = {
-      system: [],
-      runtime: "DEV",
-    };
-    // 通过全局方法获取服务主机信息
-    if (typeof getSiteConfig !== "undefined") {
-      siteConfig = getSiteConfig();
-    }
-
-    this.proxyHttp = SGResource.ensureInitialized(siteConfig, apiConfig, {
+    this.proxyHttp = SGResource.ensureInitialized(getSiteConfig(), apiConfig, {
       headers: () => {
         const headers: any = {};
         let token = "88";
