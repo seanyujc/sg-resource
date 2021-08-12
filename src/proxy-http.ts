@@ -24,16 +24,15 @@ export class ProxyHttp {
   }
   initInterceptors(options?: IInterceptorsOptions) {
     Axios.interceptors.request.use(async (config) => {
-      let _headers = {} as any;
       if (options) {
         if (options.headers) {
-          _headers = options.headers();
+          const _headers = options.headers();
+          config.headers = { ...config.headers, ..._headers };
         }
         if (options.onRequest) {
           config = await options.onRequest(config);
         }
       }
-      config.headers = { ...config.headers, ..._headers };
       return config;
     });
     Axios.interceptors.response.use(async (response) => {
