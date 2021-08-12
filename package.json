@@ -1,6 +1,6 @@
 {
   "name": "sg-resource",
-  "version": "1.0.12",
+  "version": "1.0.15",
   "description": "",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
@@ -27,7 +27,7 @@
   "files": [
     "dist/**/*.js",
     "dist/**/*.js.map",
-    "dist/*.d.ts"
+    "dist/**/*.d.ts"
   ],
   "dependencies": {
     "axios": "^0.21.1",
