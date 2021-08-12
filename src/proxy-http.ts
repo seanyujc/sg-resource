@@ -34,25 +34,9 @@ export class ProxyHttp {
         }
       }
       config.headers = { ...config.headers, ..._headers };
-      if (process.env.NODE_LOG === "open") {
-        console.log(
-          "发起请求：\n",
-          "----------------------start---------------------\n",
-          config,
-          "\n---------------------end------------------------",
-        );
-      }
       return config;
     });
     Axios.interceptors.response.use(async (response) => {
-      if (process.env.NODE_LOG === "open") {
-        console.log(
-          "返回结果：\n",
-          "----------------------start---------------------\n",
-          response,
-          "\n---------------------end------------------------",
-        );
-      }
       if (options) {
         if (options.diagnoseResponse) {
           response = await options.diagnoseResponse(response);

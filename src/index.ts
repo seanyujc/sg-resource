@@ -2,6 +2,13 @@ import { AxiosResponse } from "axios";
 import { ConfigAdapter } from "./config-adapter";
 import { createSingletonObject, Autowired } from "./decorator";
 import { IInterceptorsOptions, ProxyHttp } from "./proxy-http";
+
+declare global {
+  interface ImportMeta {
+    readonly env: any;
+  }
+}
+
 /**
  * 主机信息对象
  */
