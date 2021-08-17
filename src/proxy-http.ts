@@ -35,13 +35,18 @@ export class ProxyHttp {
       }
       return config;
     });
-    Axios.interceptors.response.use(async (response) => {
-      if (options) {
-        if (options.diagnoseResponse) {
-          response = await options.diagnoseResponse(response);
+    Axios.interceptors.response.use((response) => {
+      return new Promise<AxiosResponse<any>>((resolve, reject) => {
+        if (options) {
+          if (options.diagnoseResponse) {
+            options.diagnoseResponse(response).then(resolve).catch(reject);
+          } else {
+            resolve(response);
+          }
+        } else {
+          resolve(response);
         }
-      }
-      return response;
+      });
     });
   }
 
