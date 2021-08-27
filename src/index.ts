@@ -99,7 +99,14 @@ export interface IApiConfig<T = string> {
 
 export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
   system: ISite[];
+  /**
+   * 指定运行环境（将被废弃）
+   */
   runtime: T;
+  /**
+   * 指定运行环境
+   */
+  runtimes: T;
 }
 
 export abstract class SGResource {
