@@ -26,7 +26,7 @@ export interface ISite {
   /**
    * 环境标识
    */
-  env: "DEV" | "SIT" | "UAT" | "PROD";
+  env: "DEV" | "SIT" | "UAT" | "PROD" | string;
   /**
    * 远端服务器配置
    */
@@ -99,10 +99,6 @@ export interface IApiConfig<T = string> {
 
 export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
   system: ISite[];
-  /**
-   * 指定运行环境（将被废弃）
-   */
-  runtime: T;
   /**
    * 指定运行环境
    */

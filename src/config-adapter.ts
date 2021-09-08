@@ -13,7 +13,7 @@ export class ConfigAdapter {
   siteInfo: ISite | undefined;
   constructor(private siteConfig: ISiteConfig, private apiConfig: IApiConfig) {
     this.siteInfo = siteConfig.system.find(
-      (ele) => ele.env === siteConfig.runtime,
+      (ele) => ele.env === siteConfig.runtimes,
     );
   }
 
