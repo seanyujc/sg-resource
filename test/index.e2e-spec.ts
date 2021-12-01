@@ -1,6 +1,6 @@
 import { IApiConfig, ISite, ISiteConfig, SGResource } from "../src/index";
 
-const SITE_CONFIG: ISiteConfig = {
+const SITE_CONFIG: ISiteConfig<"DEV" | "SIT" | "UAT" | "PROD" | "UAT1"> = {
   system: [
     {
       env: "DEV",
@@ -12,7 +12,7 @@ const SITE_CONFIG: ISiteConfig = {
       local: {},
     },
   ],
-  runtime: "DEV",
+  runtimes: "UAT1",
 };
 const apiConfig: IApiConfig<"baidu"> = {
   get: {

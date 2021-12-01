@@ -9,6 +9,8 @@ declare global {
   }
 }
 
+declare type Env = "DEV" | "SIT" | "UAT" | "PROD";
+
 /**
  * 主机信息对象
  */
@@ -22,11 +24,11 @@ export interface IHost {
 /**
  * 某一个站点配置
  */
-export interface ISite {
+export interface ISite<T> {
   /**
    * 环境标识
    */
-  env: "DEV" | "SIT" | "UAT" | "PROD" | string;
+  env: T;
   /**
    * 远端服务器配置
    */
@@ -97,8 +99,8 @@ export interface IApiConfig<T = string> {
   modules?: Record<string, IApiConfig>;
 }
 
-export interface ISiteConfig<T = "DEV" | "SIT" | "UAT" | "PROD"> {
-  system: ISite[];
+export interface ISiteConfig<T = Env> {
+  system: ISite<T>[];
   /**
    * 指定运行环境
    */
