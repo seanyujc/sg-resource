@@ -58,7 +58,7 @@ npm i sg-resource
 })();
 ```
 
-* system元素各字段配置的详情
+* 字段配置的详情
 
 ```ts
 /**
@@ -187,11 +187,11 @@ export const apiConfig: IApiConfig<"user"> = {
 };
 ```
 
-### 访问接口
+### 启动和接口调用
 
 创建一个基础类并继承基础类
 
-* 创建基础类在构造方法中调用初始化方法初始化 sg-resource，自定义 ResultInfo 对象用来描述接口返回数据的包装类 
+* 使用ensureInitialized方法初始化方法初始化得到http代理对象，可自定义 ResultInfo 对象用来描述接口返回数据的包装类 
 
 ```js
 // base.serv.ts
@@ -235,7 +235,7 @@ export class BaseService {
 }
 ```
 
-* 继承基础类后使用this.proxyHttp对象中的方法得到服务能力，参数apiKey对应<a href="#api_mgt">接口配置管理</a>中的key定义
+* 继承基础类后使用this.proxyHttp对象中的方法得到调用接口能力，参数apiKey对应<a href="#api_mgt">接口配置管理</a>中的key定义
 
 ```ts
 // user.serv.ts
@@ -304,8 +304,8 @@ URI = scheme:[//authority]path
 authority = [userinfo@]host[:port]
 ```
 
-可以将 authority 置空，仅保留“//”，则表示使用客户端域名和端口，用以解决 CORS。  
-当是对象时，可使用 cors 字段明确标记此地址客户端 cors 解决方案为弃用配置的域，改为本地域，url 可写全，在符合规范的前提下 authority 内容可随意填充。  
+可以将 scheme:[//authority] 置空，则表示使用客户端域名和端口，用以解决 CORS。  
+当是对象时，可使用 cors 字段明确标记此地址客户端 cors 解决方案为弃用配置的域。将忽略所配置的  scheme:[//authority] 部分，也可直接不配置这部分。
 protocol 字段可选为全局设置协议，当设置了此字段后可以不设置 host 的 url 的协议部分，会继承全局协议，如：“//10.0.0.1:8080/user-api/”
 
 * 示例：
@@ -315,7 +315,7 @@ protocol 字段可选为全局设置协议，当设置了此字段后可以不�
   remote: {
     hosts: {
       user: {
-        url: "//10.0.0.1:8080/user-api",
+        url: "/user-api",
         cors: true
       },
       support: "https://10.0.0.1:8080/support-api",
