@@ -22,5 +22,6 @@ const apiConfig: IApiConfig<"baidu"> = {
 };
 
 describe("初始化", () => {
-  SGResource.ensureInitialized(SITE_CONFIG, apiConfig);
+  const proxyHttp = SGResource.ensureInitialized(SITE_CONFIG, apiConfig);
+  proxyHttp.get()
 });
