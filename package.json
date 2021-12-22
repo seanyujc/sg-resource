@@ -24,6 +24,7 @@
   "author": "",
   "license": "MIT",
   "types": "./dist/es/index.d.ts",
+  "type": "module",
   "files": [
     "dist/**/*.js",
     "dist/**/*.js.map",
