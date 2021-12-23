@@ -11,7 +11,7 @@ interface IHost {
 /**
  * 某一个站点配置
  */
-interface ISite<T> {
+interface ISite<T, H extends string> {
   /**
    * 环境标识
    */
@@ -23,7 +23,7 @@ interface ISite<T> {
     /**
      * 服务器地址列表
      */
-    hosts: Record<string, IHost | string>;
+    hosts: Record<H, IHost | string>;
     /**
      * 默认协议，服务器地址不设置可继承该设置
      */
@@ -66,19 +66,15 @@ interface ISite<T> {
    * 统计服务地址
    */
   sensor?: string;
-  /**
-   * 接口加密盐
-   */
-  salt?: string;
 }
 declare type Env = "DEV" | "SIT" | "UAT" | "PROD";
 
-interface ISiteConfig<T extends string> {
-  system: ISite<T>[];
+interface ISiteConfig<T extends string, H extends string> {
+  systems: ISite<T, H>[];
   /**
    * 指定运行环境
    */
   runtimes: T;
 }
 
-declare function getSiteConfig(): ISiteConfig<Env>;
+declare function getSiteConfig(): ISiteConfig<string>;

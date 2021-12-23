@@ -6,5 +6,6 @@ export function ensureInitialized<T extends any>(
   apiConfig: ApiConfigInfo<string>,
   options?: InterceptorsOptions<T>,
 ) {
-  return loadConfig(apiConfig);
+  const config = loadConfig(apiConfig);
+  return config;
 }

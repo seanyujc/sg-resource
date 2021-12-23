@@ -24,7 +24,7 @@ export interface IHost {
 /**
  * 某一个站点配置
  */
-export interface ISite<T> {
+export interface ISite<T extends string> {
   /**
    * 环境标识
    */
