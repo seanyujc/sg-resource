@@ -1,13 +1,12 @@
 /// <reference types="../../packages/typings" />
 
-import { Method } from "axios";
-import { ApiConfigInfo } from "../domain/ApiConfigInfo";
+import { ApiConfigInfo, IApiConfigInfo, Method } from "../domain/ApiConfigInfo";
 
 let systemConfig: ISite<string, string> | null = null;
-let apiConfig: ApiConfigInfo<string> | null = null;
+let apiConfigModules: Record<string, IApiConfigInfo<string>> | null = null;
 
-export function loadConfig(_apiConfig: ApiConfigInfo<string>) {
-  apiConfig = _apiConfig;
+export function loadConfig(_apiConfig: ApiConfigInfo<string, string>) {
+  apiConfigModules = { default: _apiConfig, ..._apiConfig.modules };
   if (systemConfig == null) {
     let siteConfig: ISiteConfig<string, string> = {
       systems: [],
@@ -20,16 +19,53 @@ export function loadConfig(_apiConfig: ApiConfigInfo<string>) {
     systemConfig =
       siteConfig.systems.find((system) => system.env === siteConfig.runtimes) ||
       siteConfig.systems[0];
+    for (const key in apiConfigModules) {
+      if (Object.prototype.hasOwnProperty.call(apiConfigModules, key)) {
+        const apiConfig = apiConfigModules[key];
+        for (const methodKey in apiConfig) {
+          if (
+            Object.prototype.hasOwnProperty.call(apiConfig, methodKey) &&
+            methodKey !== "modules"
+          ) {
+            const apiMap = apiConfig[methodKey as Method];
+            if (apiMap) {
+              for (const apiKey in apiMap) {
+                if (Object.prototype.hasOwnProperty.call(apiMap, apiKey)) {
+                  const apiInfo = apiMap[apiKey];
+                  const host = systemConfig.remote.hosts[apiInfo.host];
+                  if (typeof host === "string") {
+                    apiInfo.path = host + apiInfo.path;
+                  } else {
+                    if (host.cors && typeof location === "object") {
+                      apiInfo.path =
+                        location.protocol + "//" + location.host + apiInfo.path;
+                    } else {
+                      apiInfo.path = host.url + apiInfo.path;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
-  return { systemConfig, apiConfig };
+  return { systemConfig, apiConfigModules };
 }
 
 export function getRequestURL(
   method: Method,
   apiKey: string,
+  module: string = "default",
   pathParams: string[] = [],
 ) {
-  if (systemConfig != null && apiConfig != null) {
-    
+  let path = "";
+  if (systemConfig != null && apiConfigModules != null) {
+    const apiConfig = apiConfigModules[module];
+    const apiOfMethod = apiConfig[method];
+    if (apiOfMethod) {
+      path = apiOfMethod[apiKey].path + "/" + pathParams.join("/");
+    }
   }
 }
