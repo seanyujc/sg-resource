@@ -36,11 +36,12 @@ export function loadConfig(_apiConfig: ApiConfigInfo<string, string>) {
                   if (typeof host === "string") {
                     apiInfo.path = host + apiInfo.path;
                   } else {
+                    apiInfo.path = host.url + apiInfo.path;
                     if (host.cors && typeof location === "object") {
-                      apiInfo.path =
-                        location.protocol + "//" + location.host + apiInfo.path;
-                    } else {
-                      apiInfo.path = host.url + apiInfo.path;
+                      apiInfo.path = apiInfo.path.replace(
+                        /\/\/([^\/]*)/,
+                        "//" + location.host,
+                      );
                     }
                   }
                 }
