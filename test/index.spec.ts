@@ -1,11 +1,12 @@
 /// <reference types="../packages/typings" />
-import { loadConfig } from "../lib/common/config";
+import { getRequestURL, loadConfig } from "../lib/common/config";
 import { ApiConfigInfo } from "../lib/domain/ApiConfigInfo";
 import { ensureInitialized } from "../packages/normal/index";
+import { get } from "../packages/normal/main";
 
 declare type Env = "DEV" | "SIT" | "UAT" | "PROD" | "UAT1";
 declare type Host = "baidu";
-declare type Module = "shanghai"
+declare type Module = "shanghai";
 
 const SITE_CONFIG: ISiteConfig<Env, Host> = {
   systems: [
@@ -26,7 +27,7 @@ const apiShanghaiConfig: ApiConfigInfo<Host, Module> = {};
 
 const apiConfig: ApiConfigInfo<Host, Module> = {
   get: {
-    citymenu: { path: "/api/citymenu?", host: "baidu" },
+    citymenu: { path: "/api/citymenu", host: "baidu" },
   },
   post: {},
   modules: { shanghai: apiShanghaiConfig },
@@ -35,9 +36,14 @@ const apiConfig: ApiConfigInfo<Host, Module> = {
 global.getSiteConfig = () => SITE_CONFIG;
 
 describe("初始化", () => {
-  const config = loadConfig(apiConfig);
-  const proxyHttp = ensureInitialized(apiConfig);
-  it("", () => {
-    expect(proxyHttp.systemConfig).toMatchObject(SITE_CONFIG.systems[0]);
+  const config = ensureInitialized(apiConfig);
+  it("测试获取url", ()=>{
+    const url = getRequestURL("get", "citymenu", "default")
+    expect(url).toBe("http://baidu.com/web-api/api/citymenu");
+  })
+  it("测试请求", () => {
+    get("citymenu").then((res) => {
+      expect(res).toMatchObject({});
+    });
   });
 });

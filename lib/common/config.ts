@@ -3,7 +3,13 @@
 import { ApiConfigInfo, IApiConfigInfo, Method } from "../domain/ApiConfigInfo";
 
 let systemConfig: ISite<string, string> | null = null;
-let apiConfigModules: Record<string, IApiConfigInfo<string>> | null = null;
+
+type APIModules = {
+  [key: string]: IApiConfigInfo<string>;
+  default: IApiConfigInfo<string>;
+};
+
+let apiConfigModules: APIModules | null = null;
 
 export function loadConfig(_apiConfig: ApiConfigInfo<string, string>) {
   apiConfigModules = { default: _apiConfig, ..._apiConfig.modules };
@@ -66,7 +72,9 @@ export function getRequestURL(
     const apiConfig = apiConfigModules[module];
     const apiOfMethod = apiConfig[method];
     if (apiOfMethod) {
-      path = apiOfMethod[apiKey].path + "/" + pathParams.join("/");
+      pathParams.unshift(apiOfMethod[apiKey].path);
+      path = pathParams.join("/");
     }
   }
+  return path;
 }

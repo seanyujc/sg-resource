@@ -1,6 +1,14 @@
 import { ApiInfo } from "./ApiInfo";
 
-export type Method = "get" | "delete" | "head" | "options" | "post" | "put" | "patch" | "form";
+export type Method =
+  | "get"
+  | "delete"
+  | "head"
+  | "options"
+  | "post"
+  | "put"
+  | "patch"
+  | "form";
 
 export type IApiConfigInfo<T extends string> = {
   [key in Method]?: Record<string, ApiInfo<T>>;

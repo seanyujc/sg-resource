@@ -6,4 +6,4 @@ const config = {
   testRegex: ".spec.ts$",
 };
 
-export default config;
+module.exports = config;
