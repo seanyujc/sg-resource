@@ -2,10 +2,9 @@
 import { getRequestURL, loadConfig } from "../lib/common/config";
 import { ApiConfigInfo } from "../lib/domain/ApiConfigInfo";
 import { ensureInitialized } from "../packages/normal/index";
-import { get } from "../packages/normal/main";
 
 declare type Env = "DEV" | "SIT" | "UAT" | "PROD" | "UAT1";
-declare type Host = "baidu";
+declare type Host = "local";
 declare type Module = "shanghai";
 
 const SITE_CONFIG: ISiteConfig<Env, Host> = {
@@ -14,7 +13,7 @@ const SITE_CONFIG: ISiteConfig<Env, Host> = {
       env: "DEV",
       remote: {
         hosts: {
-          baidu: "http://baidu.com/web-api",
+          local: "http://localhost:8080",
         },
       },
       local: {},
@@ -23,11 +22,18 @@ const SITE_CONFIG: ISiteConfig<Env, Host> = {
   runtimes: "UAT1",
 };
 
-const apiShanghaiConfig: ApiConfigInfo<Host, Module> = {};
+const apiShanghaiConfig: ApiConfigInfo<Host, Module> = {
+  post: {
+    modifyCountry: {
+      path: "/modify_country",
+      host: "local",
+    },
+  },
+};
 
 const apiConfig: ApiConfigInfo<Host, Module> = {
   get: {
-    citymenu: { path: "/api/citymenu", host: "baidu" },
+    getCountry: { path: "/get_country", host: "local" },
   },
   post: {},
   modules: { shanghai: apiShanghaiConfig },
@@ -36,14 +42,22 @@ const apiConfig: ApiConfigInfo<Host, Module> = {
 global.getSiteConfig = () => SITE_CONFIG;
 
 describe("初始化", () => {
-  const config = ensureInitialized(apiConfig);
-  it("测试获取url", ()=>{
-    const url = getRequestURL("get", "citymenu", "default")
-    expect(url).toBe("http://baidu.com/web-api/api/citymenu");
-  })
-  it("测试请求", () => {
-    get("citymenu").then((res) => {
-      expect(res).toMatchObject({});
+  const { config, get, post } = ensureInitialized(apiConfig);
+  it("测试获取url", () => {
+    const url = getRequestURL("get", "getCountry");
+    expect(url).toBe("http://localhost:8080/get_country");
+  });
+  it("测试get请求", () => {
+    get("getCountry", { name: "US" }).then((res) => {
+      expect(res).toMatchObject({ id: 1, content: "US" });
+    });
+  });
+  it("测试post请求", () => {
+    post(
+      { apiKey: "modifyCountry", module: "shanghai" },
+      { id: 1, name: "US" },
+    ).then((res) => {
+      expect(res).toMatchObject({ id: 1, content: "US" });
     });
   });
 });

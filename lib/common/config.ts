@@ -72,8 +72,13 @@ export function getRequestURL(
     const apiConfig = apiConfigModules[module];
     const apiOfMethod = apiConfig[method];
     if (apiOfMethod) {
-      pathParams.unshift(apiOfMethod[apiKey].path);
-      path = pathParams.join("/");
+      const api = apiOfMethod[apiKey];
+      if (api) {
+        pathParams.unshift(apiOfMethod[apiKey].path);
+        path = pathParams.join("/");
+      } else {
+        throw new Error("No related configuration found");
+      }
     }
   }
   return path;
