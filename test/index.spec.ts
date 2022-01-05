@@ -42,7 +42,7 @@ const apiConfig: ApiConfigInfo<Host, Module> = {
 global.getSiteConfig = () => SITE_CONFIG;
 
 describe("初始化", () => {
-  const { config, get, post } = ensureInitialized(apiConfig);
+  const { config, get, post } = ensureInitialized<"shanghai", any>(apiConfig);
   it("测试获取url", () => {
     const url = getRequestURL("get", "getCountry");
     expect(url).toBe("http://localhost:8080/get_country");
@@ -55,9 +55,9 @@ describe("初始化", () => {
   it("测试post请求", () => {
     post(
       { apiKey: "modifyCountry", module: "shanghai" },
-      { id: 1, name: "US" },
+      { id: 2, content: "US" },
     ).then((res) => {
-      expect(res).toMatchObject({ id: 1, content: "US" });
+      expect(res).toMatchObject({ id: 2, content: "US" });
     });
   });
 });
