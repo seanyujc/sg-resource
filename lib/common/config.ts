@@ -1,12 +1,12 @@
 /// <reference types="../../packages/typings" />
 
-import { ApiConfigInfo, IApiConfigInfo, Method } from "../domain/ApiConfigInfo";
+import { ApiConfigInfo,  Method } from "../domain/ApiConfigInfo";
 
 let systemConfig: ISite<string, string> | null = null;
 
 type APIModules = {
-  [key: string]: IApiConfigInfo<string>;
-  default: IApiConfigInfo<string>;
+  [key: string]: ApiConfigInfo<string, string>;
+  default: ApiConfigInfo<string, string>;
 };
 
 let apiConfigModules: APIModules | null = null;

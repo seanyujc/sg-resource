@@ -52,7 +52,7 @@ function generateDelete<M extends string>() {
   };
 }
 
-function generatePost<M extends string>() {
+function generateHead<M extends string>() {
   return (
     apiKey: string | { module: M; apiKey: string },
     params?: Record<string, any>,
@@ -60,13 +60,63 @@ function generatePost<M extends string>() {
     options: { headers?: any } = {},
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("post", key, module, pathParams);
-    return Axios.post(url, params, {
+    const url = getRequestURL("head", key, module, pathParams);
+    return Axios.head(url, { params, headers: options.headers });
+  };
+}
+
+function generatePostPut<M extends string>(method: "post" | "put" | "patch") {
+  return (
+    apiKey: string | { module: M; apiKey: string },
+    data?: Record<string, any>,
+    pathParams?: string[],
+    options: { headers?: any } = {},
+  ) => {
+    const { key, module } = dealApiKey(apiKey);
+    const url = getRequestURL(method, key, module, pathParams);
+    return Axios[method](url, data, {
       headers: {
         post: { "Content-Type": undefined },
         ...options.headers,
       },
     }).then(transformResult);
+  };
+}
+
+function generateForm<M extends string>() {
+  return (
+    apiKey: string | { module: M; apiKey: string },
+    form: FormData,
+    pathParams?: string[],
+    options: { headers?: any } = {},
+  ) => {
+    const { key, module } = dealApiKey(apiKey);
+    const url = getRequestURL("post", key, module, pathParams);
+    return Axios.post(url, form, {
+      headers: {
+        post: { "Content-Type": undefined },
+        ...options.headers,
+      },
+    }).then(transformResult);
+  };
+}
+
+function generateOptions<M extends string>() {
+  return (
+    apiKey: string | { module: M; apiKey: string },
+    data?: Record<string, any>,
+    pathParams?: string[],
+    options: { headers?: any } = {},
+  ) => {
+    const { key, module } = dealApiKey(apiKey);
+    const url = getRequestURL("options", key, module, pathParams);
+    return Axios.options(url, {
+      data,
+      headers: {
+        post: { "Content-Type": undefined },
+        ...options.headers,
+      },
+    });
   };
 }
 
@@ -112,5 +162,15 @@ export function ensureInitialized<M extends string, T extends any>(
 ) {
   const config = loadConfig(apiConfig);
   initInterceptors<T>(options);
-  return { config, get: generateGet<M>(), delete: generateDelete(), post: generatePost<M>() };
+  return {
+    config,
+    get: generateGet<M>(),
+    _delete: generateDelete<M>(),
+    head: generateHead<M>(),
+    post: generatePostPut<M>("post"),
+    put: generatePostPut<M>("put"),
+    patch: generatePostPut<M>("patch"),
+    form: generateForm<M>(),
+    options: generateOptions<M>()
+  };
 }
