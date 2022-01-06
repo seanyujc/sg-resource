@@ -61,6 +61,22 @@ export function loadConfig(_apiConfig: ApiConfigInfo<string, string>) {
   return { systemConfig, apiConfigModules };
 }
 
+export function dealApiKey<M extends string>(
+  apiKey: string | { module: M; apiKey: string },
+) {
+  let key = "";
+  let module = "default";
+  if (typeof apiKey === "object") {
+    key = apiKey.apiKey;
+    module = apiKey.module;
+  } else {
+    key = apiKey;
+  }
+
+  return { key, module };
+}
+
+
 export function getRequestURL(
   method: Method,
   apiKey: string,

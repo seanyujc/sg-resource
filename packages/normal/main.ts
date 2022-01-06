@@ -1,25 +1,10 @@
-import { getRequestURL, loadConfig } from "../../lib/common/config";
+import { dealApiKey, getRequestURL, loadConfig } from "../../lib/common/config";
 import { ApiConfigInfo } from "../../lib/domain/ApiConfigInfo";
 import { InterceptorsOptions } from "../../lib/domain/InterceptorsOptions";
 import Axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 function transformResult(response: AxiosResponse<any>) {
   return Promise.resolve(response.data);
-}
-
-function dealApiKey<M extends string>(
-  apiKey: string | { module: M; apiKey: string },
-) {
-  let key = "";
-  let module = "default";
-  if (typeof apiKey === "object") {
-    key = apiKey.apiKey;
-    module = apiKey.module;
-  } else {
-    key = apiKey;
-  }
-
-  return { key, module };
 }
 
 function generateGet<M extends string>() {
@@ -123,14 +108,14 @@ function generateOptions<M extends string>() {
 function initInterceptors<T extends any>(options?: InterceptorsOptions<T>) {
   Axios.interceptors.request.use(async (config) => {
     if (options) {
-      if (options.headers) {
+      if (typeof options.headers === "function") {
         const _headers = options.headers();
         config.headers = {
           ...config.headers,
           ..._headers,
         };
       }
-      if (options.onRequest) {
+      if (typeof options.onRequest === "function") {
         config = await options.onRequest(config);
       }
     }
@@ -141,7 +126,7 @@ function initInterceptors<T extends any>(options?: InterceptorsOptions<T>) {
   Axios.interceptors.response.use((response) => {
     return new Promise<AxiosResponse<any>>((resolve, reject) => {
       if (options) {
-        if (options.diagnoseResponse) {
+        if (typeof options.diagnoseResponse === "function") {
           options
             .diagnoseResponse(response)
             .then((res) => resolve(res as any))
@@ -171,6 +156,6 @@ export function ensureInitialized<M extends string, T extends any>(
     put: generatePostPut<M>("put"),
     patch: generatePostPut<M>("patch"),
     form: generateForm<M>(),
-    options: generateOptions<M>()
+    options: generateOptions<M>(),
   };
 }
