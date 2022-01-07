@@ -1,6 +1,6 @@
 # sg-resource
 
-> 一个网络资源管理工具。使用 HTTP 协议请求，支持Vue、React，支持 SSR。
+> 一个网络资源管理工具。使用 HTTP 协议请求，支持 Vue、React，支持 SSR。
 
 ## 安装
 
@@ -12,35 +12,38 @@ npm i sg-resource
 
 ### 服务站点管理
 
-* system字段可配置多个环境（DEV、SIT、UAT、PROD等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过hosts字典配置多个服务地址，各环境hosts字典的key保持一致。
+- system 字段可配置多个环境（DEV、SIT、UAT、PROD 等），"env"字段指定环境（必填），使用 runtime 字段选择其中一个环境。在每个环境里通过 hosts 字典配置多个服务地址，各环境 hosts 字典的 key 保持一致。
 
 ```js
 // site.config.js
 // @ts-check
 /// <reference path="../typings/global.d.ts" />
-(function() {
+(function () {
   const /** @type {import("sg-resource").ISiteConfig} */ SITE_CONFIG = {
-    system: [{
-      env: "DEV",
-      remote: {
-        hosts: {
-          user: "http://127.0.0.1:8080/web-api",
+      system: [
+        {
+          env: "DEV",
+          remote: {
+            hosts: {
+              user: "http://127.0.0.1:8080/web-api",
+            },
+          },
+          local: {},
+          entrance: "",
         },
-      },
-      local: {},
-      entrance: "",
-    }, {
-      env: "SIT",
-      remote: {
-        hosts: {
-          user: "http://127.0.0.1:8080/web-api",
+        {
+          env: "SIT",
+          remote: {
+            hosts: {
+              user: "http://127.0.0.1:8080/web-api",
+            },
+          },
+          local: {},
+          entrance: "",
         },
-      },
-      local: {},
-      entrance: "",
-    }, ],
-    runtime: "DEV",
-  };
+      ],
+      runtime: "DEV",
+    };
 
   // 通过全局get方法导出
   if (typeof window === "object") {
@@ -51,14 +54,13 @@ npm i sg-resource
   }
   if (typeof module === "object") {
     module.exports = {
-      SITE_CONFIG
+      SITE_CONFIG,
     };
   }
-
 })();
 ```
 
-* 字段配置的详情
+- 字段配置的详情
 
 ```ts
 /**
@@ -136,20 +138,19 @@ interface IHost {
 }
 ```
 
-* site.config.js引入方式：
-1) 在CSR当作静态资源引入
+- site.config.js 引入方式：
+
+1. 在 CSR 当作静态资源引入
 
 ```html
 <script src="/public/site.config.js"></script>
 ```
 
-2) 在SSR模块式引入
+2. 在 SSR 模块式引入
 
 ```js
 // js
-const {
-  SITE_CONFIG
-} = require("./config/site.config");
+const { SITE_CONFIG } = require("./config/site.config");
 const currentConfig = SITE_CONFIG.system.find(
   (item) => item.env === SITE_CONFIG.runtime,
 );
@@ -160,7 +161,7 @@ const currentConfig = SITE_CONFIG.system.find(
 import "../config/site.config";
 let siteConfig: ISiteConfig = {
   system: [],
-  runtime: "DEV"
+  runtime: "DEV",
 };
 
 if (getSiteConfig) {
@@ -170,7 +171,6 @@ if (getSiteConfig) {
 const config = siteConfig.system.find(
   (item) => item.env === siteConfig.runtime,
 );
-
 ```
 
 ### <a name="api_mgt">接口配置管理</a>
@@ -191,21 +191,13 @@ export const apiConfig: IApiConfig<"user"> = {
 
 创建一个基础类并继承基础类
 
-* 使用ensureInitialized方法初始化方法初始化得到http代理对象，可自定义 ResultInfo 对象用来描述接口返回数据的包装类 
+- 使用 ensureInitialized 方法初始化方法初始化得到 http 代理对象，可自定义 ResultInfo 对象用来描述接口返回数据的包装类
 
 ```js
 // base.serv.ts
-import {
-  apiConfig
-} from "@/app/config/api.config";
-import {
-  ISiteConfig,
-  ProxyHttp,
-  SGResource
-} from "sg-resource";
-import {
-  ResultInfo
-} from "../domain/ResultInfo";
+import { apiConfig } from "@/app/config/api.config";
+import { ISiteConfig, ProxyHttp, SGResource } from "sg-resource";
+import { ResultInfo } from "../domain/ResultInfo";
 
 export class BaseService {
   proxyHttp: ProxyHttp;
@@ -235,7 +227,7 @@ export class BaseService {
 }
 ```
 
-* 继承基础类后使用this.proxyHttp对象中的方法得到调用接口能力，参数apiKey对应<a href="#api_mgt">接口配置管理</a>中的key定义
+- 继承基础类后使用 this.proxyHttp 对象中的方法得到调用接口能力，参数 apiKey 对应<a href="#api_mgt">接口配置管理</a>中的 key 定义
 
 ```ts
 // user.serv.ts
@@ -251,17 +243,20 @@ export class UserService extends BaseService {
 }
 ```
 
-### 使用service类
+### 使用 service 类
 
 ```ts
 // 在你需要的
 const userService = new UserService();
-userService.login("sean", "666666").then(data=>{
-  // store info of user and to home
-}).catch(console.log);
+userService
+  .login("sean", "666666")
+  .then((data) => {
+    // store info of user and to home
+  })
+  .catch(console.log);
 ```
 
-### 在ts中你可能需要添加类型定义
+### 在 ts 中你可能需要添加类型定义
 
 ```ts
 // global.d.ts
@@ -271,30 +266,29 @@ declare global {
   interface Window {
     getSiteConfig?: () => ISiteConfig;
   }
-  const getSiteConfig: (() => ISiteConfig) | undefined;  
+  const getSiteConfig: (() => ISiteConfig) | undefined;
 
-   namespace NodeJS {
+  namespace NodeJS {
     interface Global {
-        getSiteConfig?: () => ISiteConfig;
+      getSiteConfig?: () => ISiteConfig;
     }
   }
 }
-
 ```
 
 ## 接口文档
 
-* 主机配置管理
-* 接口配置管理
-* 初始化方法
-* http 请求代理
+- 主机配置管理
+- 接口配置管理
+- 初始化方法
+- http 请求代理
 
 ### 主机配置
 
 #### # remote
 
-* 类型：{ hosts: { [key: string]: string | { url: string; cors?: boolean }}; protocol?: string }
-* 详细：remote 用于配置接口服务器的访问地址、首路径。hosts 字段用于配置一组主机地址，一般对应一个服务，map 类型，其 key 用于检索识别主机，value 类型可以是字符串或对象。当为字符串时应符合 URI 规范，形式如下：
+- 类型：{ hosts: { [key: string]: string | { url: string; cors?: boolean }}; protocol?: string }
+- 详细：remote 用于配置接口服务器的访问地址、首路径。hosts 字段用于配置一组主机地址，一般对应一个服务，map 类型，其 key 用于检索识别主机，value 类型可以是字符串或对象。当为字符串时应符合 URI 规范，形式如下：
 
 ```
 URI = scheme:[//authority]path
@@ -305,10 +299,10 @@ authority = [userinfo@]host[:port]
 ```
 
 可以将 scheme:[//authority] 置空，则表示使用客户端域名和端口，用以解决 CORS。  
-当是对象时，可使用 cors 字段明确标记此地址客户端 cors 解决方案为弃用配置的域。将忽略所配置的  scheme:[//authority] 部分，也可直接不配置这部分。
+当是对象时，可使用 cors 字段明确标记此地址客户端 cors 解决方案为弃用配置的域。将忽略所配置的 scheme:[//authority] 部分，也可直接不配置这部分。
 protocol 字段可选为全局设置协议，当设置了此字段后可以不设置 host 的 url 的协议部分，会继承全局协议，如：“//10.0.0.1:8080/user-api/”
 
-* 示例：
+- 示例：
 
 ```js
 {
@@ -326,16 +320,16 @@ protocol 字段可选为全局设置协议，当设置了此字段后可以不�
 
 #### # local
 
-* 类型：{ protocol?: string; hostname?: string; port?: number; publicPath: string }
-* 详细：local 为开发服务器或服务器端渲染服务器配置本地域名、端口、发布目录。
+- 类型：{ protocol?: string; hostname?: string; port?: number; publicPath: string }
+- 详细：local 为开发服务器或服务器端渲染服务器配置本地域名、端口、发布目录。
 
 ### 接口配置
 
 #### # post
 
-* 类型：{ [key: string]: { host: string; path: string } }
-* 详细：post 定义为 http 的一组 post 请求。为 map 类型，key 用于检索，value 类型为对象，其 host 字段为主机配置中的 hosts 对象的 key，用于选取接口主机地址；path 字段为此接口服务内部访问路径。
-* 示例：
+- 类型：{ [key: string]: { host: string; path: string } }
+- 详细：post 定义为 http 的一组 post 请求。为 map 类型，key 用于检索，value 类型为对象，其 host 字段为主机配置中的 hosts 对象的 key，用于选取接口主机地址；path 字段为此接口服务内部访问路径。
+- 示例：
 
 ```js
 post: {
@@ -352,7 +346,7 @@ post: {
 
 初始化并返回一个 ProxyHttp 对象实例。
 
-#### # SGResource.ensureInitialized(apiConfig: IApiConfig, siteConfig: ISiteConfig, options?: IInterceptorsOptions): ProxyHttp; 
+#### # SGResource.ensureInitialized(apiConfig: IApiConfig, siteConfig: ISiteConfig, options?: IInterceptorsOptions): ProxyHttp;
 
 可选项定义：
 
@@ -373,7 +367,7 @@ IInterceptorsOptions {
 
 #### # post(apiKey: string; params?: { [key: string]: string }; pathParams?: string[]; options: { headers?: any } = {})
 
-* 示例：
+- 示例：
 
 ```js
 login(userName: string, password: string): Promise < any > {
@@ -384,7 +378,7 @@ login(userName: string, password: string): Promise < any > {
 }
 ```
 
-* 实例方法定义
+- 实例方法定义
 
 ```ts
 /**
@@ -441,3 +435,13 @@ getFiles(urls: string[], options?: {
 }): Promise<File[]>;
 
 ```
+
+#### 请求参数 options
+
+| 字段              | 说明                                                                                 | 默认值 | 备注 |
+| ----------------- | ------------------------------------------------------------------------------------ | ------ | ---- |
+| headers           | 请求头信息添加                                                                       | -      |
+| cancelLevel       | 放弃上一次请求等级。0 不放弃, 1 全局, 2 到域名, 3 到服务, 4 到接口, 5 到参数, 6 到值 | 0      |
+| overCancelUpLevel | 覆盖放弃上一级
+
+### 重复请求时放弃上一次请求

@@ -1,6 +1,9 @@
 /// <reference types="../../packages/typings" />
 
-import { ApiConfigInfo,  Method } from "../domain/ApiConfigInfo";
+import { ApiConfigInfo, Method } from "../domain/ApiConfigInfo";
+import { RequestURIInfo } from "../domain/RequestURIInfo";
+import md5 from "md5";
+import { RequestSignalInfo } from "../domain/RequestSignalInfo";
 
 let systemConfig: ISite<string, string> | null = null;
 
@@ -40,9 +43,11 @@ export function loadConfig(_apiConfig: ApiConfigInfo<string, string>) {
                   const apiInfo = apiMap[apiKey];
                   const host = systemConfig.remote.hosts[apiInfo.host];
                   if (typeof host === "string") {
-                    apiInfo.path = host + apiInfo.path;
+                    apiInfo.url = host + apiInfo.path;
+                    apiInfo.hostUrl = host;
                   } else {
-                    apiInfo.path = host.url + apiInfo.path;
+                    apiInfo.url = host.url + apiInfo.path;
+                    apiInfo.hostUrl = host.url;
                     if (host.cors && typeof location === "object") {
                       apiInfo.path = apiInfo.path.replace(
                         /\/\/([^\/]*)/,
@@ -76,26 +81,94 @@ export function dealApiKey<M extends string>(
   return { key, module };
 }
 
-
 export function getRequestURL(
   method: Method,
   apiKey: string,
   module: string = "default",
   pathParams: string[] = [],
 ) {
-  let path = "";
+  const resInfo = new RequestURIInfo();
   if (systemConfig != null && apiConfigModules != null) {
     const apiConfig = apiConfigModules[module];
     const apiOfMethod = apiConfig[method];
     if (apiOfMethod) {
-      const api = apiOfMethod[apiKey];
-      if (api) {
-        pathParams.unshift(apiOfMethod[apiKey].path);
-        path = pathParams.join("/");
+      const apiInfo = apiOfMethod[apiKey];
+      if (apiInfo && apiInfo.url) {
+        pathParams.unshift(apiInfo.url);
+        resInfo.path = apiInfo.path;
+        resInfo.hostUrl = apiInfo.hostUrl || "";
+        resInfo.host = resInfo.hostUrl.replace(/(http(s)*:\/\/[^/]+)/, "");
+        resInfo.url = pathParams.join("/");
+        resInfo.pathParams = pathParams;
+        const domain = resInfo.hostUrl.match(/(http(s)*:\/\/[^/]+)/);
+        if (domain != null) {
+          resInfo.domain = domain[0];
+        }
       } else {
         throw new Error("No related configuration found");
       }
     }
   }
-  return path;
+  return resInfo;
+}
+
+/**
+ * 生成请求签名
+ * @param requestURL
+ * @param data
+ * @param level 全局、域、主机、接口、参数
+ */
+export function generateRequestSignal(
+  requestURI: RequestURIInfo,
+  level: 1 | 2 | 3 | 4 | 5 | 6,
+  data?: Record<string, any>,
+) {
+  console.log(requestURI);
+
+  const signalList: string[] = [];
+  const dataSignal: string[] = [];
+  switch (level) {
+    case 6:
+      if (requestURI.pathParams.length) {
+        dataSignal.concat(requestURI.pathParams);
+      }
+      for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          const value = data[key];
+          if (typeof value === "object") {
+            dataSignal.push(md5(JSON.stringify(value)));
+          } else if (typeof value === "string" && value.length > 255) {
+            dataSignal.push(md5(value));
+          } else {
+            dataSignal.push(value);
+          }
+        }
+      }
+      const values = dataSignal.join("/");
+      signalList.unshift(values);
+    case 5:
+      dataSignal.length = 0;
+      if (data) {
+        for (const key in data) {
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            dataSignal.push(key);
+          }
+        }
+      }
+      const keys = dataSignal.join("/");
+      signalList.unshift(keys);
+    case 4:
+      signalList.unshift(requestURI.path);
+    case 3:
+      signalList.unshift(requestURI.host);
+    case 2:
+      signalList.unshift(requestURI.domain);
+    case 1:
+      signalList.unshift("global");
+    default:
+      break;
+  }
+  const signal = signalList.join("|");
+
+  return new RequestSignalInfo(signalList, signal, md5(signal));
 }

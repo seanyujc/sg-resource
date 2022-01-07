@@ -60,32 +60,35 @@ describe("初始化", () => {
     any
   >(apiConfig);
   it("测试获取url", () => {
-    const url = getRequestURL("get", "getCountry");
-    expect(url).toBe("http://localhost:8080/get_country");
+    const requestURL = getRequestURL("get", "getCountry");
+    expect(requestURL.url).toBe("http://localhost:8080/get_country");
   });
-  it("测试get请求", () => {
-    get("getCountry", { id: 1, name: "US" }).then((res) => {
-      expect(res).toMatchObject({ id: 1, content: "US" });
-    });
+  it("测试get请求", async () => {
+    const pa = Promise.all([get("getCountry", { id: 1, name: "US" }, [], {
+      cancelLevel: 6,
+    }),get("getCountry", { id: 1, name: "US" }, [], {
+      cancelLevel: 6,
+    })])
+    const res = await pa;
+    expect(res).toMatchObject({ id: 1, content: "US" });
   });
-  it("测试head请求", async () => {
-    const res = await head("getCountry", { id: 1, name: "US" });
-    console.log(res);
-  });
-  it("测试post请求", async () => {
-    const res = await post(
-      { apiKey: "modifyCountry", module: "shanghai" },
-      { id: 2, content: "US" },
-    );
-    expect(res).toMatchObject({ id: 2, content: "US" });
-  });
-  it("测试options请求", async () => {
-    const res = await options(
-      { apiKey: "modifyCountry", module: "shanghai" },
-      { id: 2, content: "US" },
-    );
-    console.log(res);
-    
-    // expect(res).toMatchObject({ id: 2, content: "US" });
-  });
+  // it("测试head请求", async () => {
+  //   const res = await head("getCountry", { id: 1, name: "US" });
+  //   console.log(res);
+  // });
+  // it("测试post请求", async () => {
+  //   const res = await post(
+  //     { apiKey: "modifyCountry", module: "shanghai" },
+  //     { id: 2, content: "US" },
+  //   );
+  //   expect(res).toMatchObject({ id: 2, content: "US" });
+  // });
+  // it("测试options请求", async () => {
+  //   const res = await options(
+  //     { apiKey: "modifyCountry", module: "shanghai" },
+  //     { id: 2, content: "US" },
+  //   );
+  //   console.log(res);
+
+  // });
 });

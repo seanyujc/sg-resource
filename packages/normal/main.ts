@@ -1,10 +1,47 @@
-import { dealApiKey, getRequestURL, loadConfig } from "../../lib/common/config";
+import {
+  dealApiKey,
+  generateRequestSignal,
+  getRequestURL,
+  loadConfig,
+} from "../../lib/common/config";
 import { ApiConfigInfo } from "../../lib/domain/ApiConfigInfo";
 import { InterceptorsOptions } from "../../lib/domain/InterceptorsOptions";
-import Axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import Axios, {
+  AxiosRequestConfig,
+  AxiosResponse,
+  CancelTokenSource,
+} from "axios";
+import { RequestOptionInfo } from "../../lib/domain/RequestOptionInfo";
+import { RequestSignalInfo } from "../../lib/domain/RequestSignalInfo";
+import { RequestURIInfo } from "../../lib/domain/RequestURIInfo";
+
+const CancelToken = Axios.CancelToken;
+const RequestingSignalList: RequestSignalInfo[] = [];
 
 function transformResult(response: AxiosResponse<any>) {
   return Promise.resolve(response.data);
+}
+
+function getCancelSource(
+  requestURI: RequestURIInfo,
+  options: RequestOptionInfo,
+  data?: Record<string, any>,
+) {
+  if (options.cancelLevel) {
+    const requestSignal = generateRequestSignal(requestURI, options.cancelLevel, data);
+    const res = RequestingSignalList.find(
+      (item) => item.key === requestSignal.key,
+    );
+    if (res && res.source) {
+      res.source.cancel();
+    } else {
+      requestSignal.source = CancelToken.source();
+      RequestingSignalList.push(requestSignal);
+    }
+    console.log(requestSignal);
+    
+    return requestSignal;
+  }
 }
 
 function generateGet<M extends string>() {
@@ -12,13 +49,30 @@ function generateGet<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     params?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("get", key, module, pathParams);
-    return Axios.get(url, { params, headers: options.headers }).then(
-      transformResult,
+    const requestURI = getRequestURL("get", key, module, pathParams);
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      params,
     );
+    return Axios.get(requestURI.url, {
+      params,
+      data: { _requestURI: requestURI },
+      headers: options.headers,
+      cancelToken:
+        requestSignal && requestSignal.source
+          ? requestSignal.source.token
+          : undefined,
+    }).then(transformResult, (error) => {
+      if (Axios.isCancel(error)) {
+        console.log("Request canceled");
+      } else {
+       return Promise.reject(error);
+      }
+    });
   };
 }
 
@@ -27,13 +81,23 @@ function generateDelete<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     params?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("delete", key, module, pathParams);
-    return Axios.delete(url, { params, headers: options.headers }).then(
-      transformResult,
+    const requestURI = getRequestURL("delete", key, module, pathParams);
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      params,
     );
+    return Axios.delete(requestURI.url, {
+      params,
+      headers: options.headers,
+      cancelToken:
+        requestSignal && requestSignal.source
+          ? requestSignal.source.token
+          : undefined,
+    }).then(transformResult);
   };
 }
 
@@ -42,27 +106,50 @@ function generateHead<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     params?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("head", key, module, pathParams);
-    return Axios.head(url, { params, headers: options.headers });
+    const requestURI = getRequestURL("head", key, module, pathParams);
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      params,
+    );
+    return Axios.head(requestURI.url, {
+      params,
+      headers: options.headers,
+      cancelToken:
+        requestSignal && requestSignal.source
+          ? requestSignal.source.token
+          : undefined,
+    });
   };
 }
 
-function generatePostPut<M extends string>(method: "post" | "put" | "patch") {
+function generatePostPutPatch<M extends string>(
+  method: "post" | "put" | "patch",
+) {
   return (
     apiKey: string | { module: M; apiKey: string },
     data?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL(method, key, module, pathParams);
-    return Axios[method](url, data, {
+    const requestURI = getRequestURL(method, key, module, pathParams);
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      data,
+    );
+    return Axios[method](requestURI.url, data, {
       headers: {
         post: { "Content-Type": undefined },
         ...options.headers,
+        cancelToken:
+          requestSignal && requestSignal.source
+            ? requestSignal.source.token
+            : undefined,
       },
     }).then(transformResult);
   };
@@ -73,14 +160,27 @@ function generateForm<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     form: FormData,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("post", key, module, pathParams);
-    return Axios.post(url, form, {
+    const requestURI = getRequestURL("post", key, module, pathParams);
+    const data: any = {};
+    form.forEach((value, key) => {
+      data[key] = value;
+    });
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      data,
+    );
+    return Axios.post(requestURI.url, form, {
       headers: {
         post: { "Content-Type": undefined },
         ...options.headers,
+        cancelToken:
+          requestSignal && requestSignal.source
+            ? requestSignal.source.token
+            : undefined,
       },
     }).then(transformResult);
   };
@@ -91,15 +191,24 @@ function generateOptions<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     data?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     const { key, module } = dealApiKey(apiKey);
-    const url = getRequestURL("options", key, module, pathParams);
-    return Axios.options(url, {
+    const requestURI = getRequestURL("options", key, module, pathParams);
+    const requestSignal = getCancelSource(
+      requestURI,
+      options,
+      data,
+    );
+    return Axios.options(requestURI.url, {
       data,
       headers: {
         post: { "Content-Type": undefined },
         ...options.headers,
+        cancelToken:
+          requestSignal && requestSignal.source
+            ? requestSignal.source.token
+            : undefined,
       },
     });
   };
@@ -120,7 +229,7 @@ function initInterceptors<T extends any>(options?: InterceptorsOptions<T>) {
       }
     }
     console.log(config);
-
+    delete config.data._requestURI;
     return config;
   });
   Axios.interceptors.response.use((response) => {
@@ -152,9 +261,9 @@ export function ensureInitialized<M extends string, T extends any>(
     get: generateGet<M>(),
     _delete: generateDelete<M>(),
     head: generateHead<M>(),
-    post: generatePostPut<M>("post"),
-    put: generatePostPut<M>("put"),
-    patch: generatePostPut<M>("patch"),
+    post: generatePostPutPatch<M>("post"),
+    put: generatePostPutPatch<M>("put"),
+    patch: generatePostPutPatch<M>("patch"),
     form: generateForm<M>(),
     options: generateOptions<M>(),
   };

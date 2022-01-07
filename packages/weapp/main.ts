@@ -2,6 +2,7 @@
 import { dealApiKey, getRequestURL, loadConfig } from "../../lib/common/config";
 import { ApiConfigInfo } from "../../lib/domain/ApiConfigInfo";
 import { InterceptorsOptions } from "../../lib/domain/InterceptorsOptions";
+import { RequestOptionInfo } from "../../lib/domain/RequestOptionInfo";
 
 function initInterceptors(options: any) {}
 
@@ -10,23 +11,24 @@ function generatePost<M extends string>() {
     apiKey: string | { module: M; apiKey: string },
     data?: Record<string, any>,
     pathParams?: string[],
-    options: { headers?: any } = {},
+    options = new RequestOptionInfo(),
   ) => {
     return new Promise((resolve, rejcect) => {
       const { key, module } = dealApiKey(apiKey);
-      const url = getRequestURL("post", key, module, pathParams);
-      const option: WechatMiniprogram.RequestOption<WechatMiniprogram.IAnyObject> = {
-        method: "POST",
-        url,
-        data,
-        header: { ...options.headers },
-        success: (res) => {
-          resolve(res);
-        },
-        fail: (res) => {
-          rejcect(res);
-        },
-      };
+      const { url } = getRequestURL("post", key, module, pathParams);
+      const option: WechatMiniprogram.RequestOption<WechatMiniprogram.IAnyObject> =
+        {
+          method: "POST",
+          url,
+          data,
+          header: { ...options.headers },
+          success: (res) => {
+            resolve(res);
+          },
+          fail: (res) => {
+            rejcect(res);
+          },
+        };
       const task = wx.request(option);
     });
   };
