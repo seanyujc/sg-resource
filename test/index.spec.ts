@@ -64,11 +64,14 @@ describe("初始化", () => {
     expect(requestURL.url).toBe("http://localhost:8080/get_country");
   });
   it("测试get请求", async () => {
-    const pa = Promise.all([get("getCountry", { id: 1, name: "US" }, [], {
-      cancelLevel: 6,
-    }),get("getCountry", { id: 1, name: "US" }, [], {
-      cancelLevel: 6,
-    })])
+    const pa = Promise.all([
+      get("getCountry", { id: 1, name: "US" }, [], {
+        cancelLevel: 6,
+      }),
+      get("getCountry", { id: 1, name: "US" }, [], {
+        cancelLevel: 6,
+      }),
+    ]);
     const res = await pa;
     expect(res).toMatchObject({ id: 1, content: "US" });
   });
