@@ -23,7 +23,7 @@
   ],
   "author": "",
   "license": "MIT",
-  "types": "./dist/es/index.d.ts",
+  "types": "./dist/es/packages/index.d.ts",
   "files": [
     "dist/**/*.js",
     "dist/**/*.js.map",
@@ -33,7 +33,8 @@
     "axios": "^0.21.1",
     "md5": "^2.3.0",
     "miniprogram-api-typings": "^3.4.4",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
