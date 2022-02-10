@@ -6,6 +6,7 @@
   "module": "dist/es/index.js",
   "scripts": {
     "dev": "rollup -c -w",
+    "prebuild": "rm -rf dist",
     "build": "cross-env NODE_ENV=production rollup -c",
     "link": "npm unlink && npm link",
     "test": "jest"

@@ -1,8 +1,10 @@
 import { Autowired, createSingletonObject } from "./decorator";
 import { ensureInitialized } from "./normal";
-import { ensureInitialized as ensureInitializedWx } from "./weapp"
+import { ensureInitialized as ensureInitializedWx } from "./weapp";
 
 export {
-  ensureInitialized, ensureInitializedWx,
-  createSingletonObject, Autowired
+  ensureInitialized,
+  ensureInitializedWx,
+  createSingletonObject,
+  Autowired,
 };

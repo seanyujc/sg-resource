@@ -1,0 +1,18 @@
+apiConfig: 
+  get: 
+    getCountry: 
+      path: "/p"
+      host: ""
+  post: 
+    modifyContry: 
+      path: "/l"
+      host: ""
+  modules:
+    apiShanghaiConfig:
+      <<: *apiShanghaiConfig
+    
+---
+apiShanghaiConfig: &apiShanghaiConfig
+  get:
+    getCountry: 
+      path: "/p"

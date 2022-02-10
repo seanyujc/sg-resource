@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schema/api-config-schema.json",
+  "type": "object",
+  "patternProperties": {
+    "^api": {
+      "type": "object",
+      "description": "Host config",
+      "patternProperties": {
+        "get|delete|head|post|put|pathc|options|form": {
+          "type": "object",
+          "description": "http request",
+          "additionalProperties": {
+            "$ref": "#/$defs/api"
+          }
+        }
+      },
+      "additionalProperties": {
+        "modules": {
+          "type": "object",
+          "description": "schema",
+          "additionalProperties":{
+            "$ref": "/schema/api-config-schema.json"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "api": {
+      "type": "object",
+      "description": "api config",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "request path",
+          "pattern": "^(/[^/]+)+$"
+        },
+        "host": {
+          "type": "string",
+          "description": "key of host"
+        }
+      }
+    }
+  }
+}
