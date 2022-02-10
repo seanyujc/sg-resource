@@ -6,11 +6,7 @@ import {
 } from "../../lib/common/config";
 import { ApiConfigInfo } from "../../lib/domain/ApiConfigInfo";
 import { InterceptorsOptions } from "../../lib/domain/InterceptorsOptions";
-import Axios, {
-  AxiosRequestConfig,
-  AxiosResponse,
-  CancelTokenSource,
-} from "axios";
+import Axios, { AxiosResponse } from "axios";
 import { RequestOptionInfo } from "../../lib/domain/RequestOptionInfo";
 import { RequestSignalInfo } from "../../lib/domain/RequestSignalInfo";
 import { RequestURIInfo } from "../../lib/domain/RequestURIInfo";
@@ -28,7 +24,11 @@ function getCancelSource(
   data?: Record<string, any>,
 ) {
   if (options.cancelLevel) {
-    const requestSignal = generateRequestSignal(requestURI, options.cancelLevel, data);
+    const requestSignal = generateRequestSignal(
+      requestURI,
+      options.cancelLevel,
+      data,
+    );
     const res = RequestingSignalList.find(
       (item) => item.key === requestSignal.key,
     );
@@ -39,7 +39,7 @@ function getCancelSource(
       RequestingSignalList.push(requestSignal);
     }
     console.log(requestSignal);
-    
+
     return requestSignal;
   }
 }
@@ -53,11 +53,7 @@ function generateGet<M extends string>() {
   ) => {
     const { key, module } = dealApiKey(apiKey);
     const requestURI = getRequestURL("get", key, module, pathParams);
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      params,
-    );
+    const requestSignal = getCancelSource(requestURI, options, params);
     return Axios.get(requestURI.url, {
       params,
       data: { _requestURI: requestURI },
@@ -70,7 +66,7 @@ function generateGet<M extends string>() {
       if (Axios.isCancel(error)) {
         console.log("Request canceled");
       } else {
-       return Promise.reject(error);
+        return Promise.reject(error);
       }
     });
   };
@@ -85,11 +81,7 @@ function generateDelete<M extends string>() {
   ) => {
     const { key, module } = dealApiKey(apiKey);
     const requestURI = getRequestURL("delete", key, module, pathParams);
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      params,
-    );
+    const requestSignal = getCancelSource(requestURI, options, params);
     return Axios.delete(requestURI.url, {
       params,
       headers: options.headers,
@@ -110,11 +102,7 @@ function generateHead<M extends string>() {
   ) => {
     const { key, module } = dealApiKey(apiKey);
     const requestURI = getRequestURL("head", key, module, pathParams);
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      params,
-    );
+    const requestSignal = getCancelSource(requestURI, options, params);
     return Axios.head(requestURI.url, {
       params,
       headers: options.headers,
@@ -137,11 +125,7 @@ function generatePostPutPatch<M extends string>(
   ) => {
     const { key, module } = dealApiKey(apiKey);
     const requestURI = getRequestURL(method, key, module, pathParams);
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      data,
-    );
+    const requestSignal = getCancelSource(requestURI, options, data);
     return Axios[method](requestURI.url, data, {
       headers: {
         post: { "Content-Type": undefined },
@@ -168,11 +152,7 @@ function generateForm<M extends string>() {
     form.forEach((value, key) => {
       data[key] = value;
     });
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      data,
-    );
+    const requestSignal = getCancelSource(requestURI, options, data);
     return Axios.post(requestURI.url, form, {
       headers: {
         post: { "Content-Type": undefined },
@@ -195,11 +175,7 @@ function generateOptions<M extends string>() {
   ) => {
     const { key, module } = dealApiKey(apiKey);
     const requestURI = getRequestURL("options", key, module, pathParams);
-    const requestSignal = getCancelSource(
-      requestURI,
-      options,
-      data,
-    );
+    const requestSignal = getCancelSource(requestURI, options, data);
     return Axios.options(requestURI.url, {
       data,
       headers: {

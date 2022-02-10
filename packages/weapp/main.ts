@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../../node_modules/miniprogram-api-typings/types/index.d.ts" />
 import { dealApiKey, getRequestURL, loadConfig } from "../../lib/common/config";
 import { ApiConfigInfo } from "../../lib/domain/ApiConfigInfo";
@@ -53,13 +54,13 @@ function generateRequestMethod<M extends string>(
           url,
           data,
           header: { ...globalHeader, ...options.headers },
-          success: async(res) => {
+          success: async (res) => {
             if (
               interceptorsOptions &&
               typeof interceptorsOptions.diagnoseResponse === "function"
             ) {
               const _res = await interceptorsOptions.diagnoseResponse(res);
-              resolve(_res)
+              resolve(_res);
             } else {
               resolve(res);
             }
