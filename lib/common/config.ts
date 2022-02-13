@@ -1,5 +1,3 @@
-/// <reference types="../../packages/typings" />
-
 import { ApiConfigInfo, Method } from "../domain/ApiConfigInfo";
 import { RequestURIInfo } from "../domain/RequestURIInfo";
 import md5 from "md5";
@@ -84,7 +82,7 @@ export function dealApiKey<M extends string>(
 export function getRequestURL(
   method: Method,
   apiKey: string,
-  module: string = "default",
+  module = "default",
   pathParams: string[] = [],
 ) {
   const resInfo = new RequestURIInfo();

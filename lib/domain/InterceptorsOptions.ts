@@ -10,5 +10,4 @@ export class InterceptorsOptions<T extends any> {
    * 返回值拦截处理
    */
   diagnoseResponse?: (config: AxiosResponse<T>) => Promise<T>;
-  constructor() {}
 }

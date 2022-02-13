@@ -1,4 +1,4 @@
-/// <reference types="../packages/typings" />
+/// <reference types="../typings" />
 import { getRequestURL, loadConfig } from "../lib/common/config";
 import { ApiConfigInfo } from "../lib/domain/ApiConfigInfo";
 import { ensureInitialized } from "../packages/normal/index";
