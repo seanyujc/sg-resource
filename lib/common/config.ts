@@ -1,3 +1,4 @@
+/// <reference types="../../typings" />
 import { ApiConfigInfo, Method } from "../domain/ApiConfigInfo";
 import { RequestURIInfo } from "../domain/RequestURIInfo";
 import md5 from "md5";
