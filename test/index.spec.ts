@@ -4,7 +4,7 @@ import { ApiConfigInfo } from "../lib/domain/ApiConfigInfo";
 import { ensureInitialized } from "../packages/normal/index";
 
 declare type EnvKeys = "DEV" | "SIT" | "UAT" | "PROD" | "UAT1";
-declare type HostKeys = "local" | "pmcp";
+declare type HostKeys = "local" | "shanghai";
 declare type ModuleKeys = "shanghai";
 
 const SITE_CONFIG: ISiteConfig<EnvKeys, HostKeys> = {
@@ -14,7 +14,7 @@ const SITE_CONFIG: ISiteConfig<EnvKeys, HostKeys> = {
       remote: {
         hosts: {
           local: "http://localhost:8080",
-          pmcp: "http://pmcp.dev1.yaoyanshe.net/gateway/pmcp-app",
+          shanghai: "http://pmcp.dev1.yaoyanshe.net/gateway/pmcp-app",
         },
       },
       local: {},

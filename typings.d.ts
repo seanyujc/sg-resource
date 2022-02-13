@@ -32,7 +32,7 @@ interface ISite<T, H extends string> {
   /**
    * 本地服务器配置
    */
-  local: {
+  local?: {
     /**
      * 协议
      */
@@ -55,11 +55,11 @@ interface ISite<T, H extends string> {
     assetsPath?: string;
   };
   /**
-   * 自定义
+   * 自定义配置
    */
   custom?: Record<string, any>;
   /**
-   * 第三方登录入口
+   * 登录入口
    */
   entrance?: string;
   /**

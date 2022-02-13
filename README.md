@@ -19,7 +19,7 @@ npm i sg-resource
 // @ts-check
 /// <reference path="../typings/global.d.ts" />
 (function () {
-  const /** @type {import("sg-resource").ISiteConfig} */ SITE_CONFIG = {
+  const /** @type {SiteConfig<"DEV" | "SIT" | "UAT" | "PROD", "default">} */ SITE_CONFIG = {
       system: [
         {
           env: "DEV",
