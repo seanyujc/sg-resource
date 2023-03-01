@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "esnext",
+    "lib": ["ESNext", "DOM"],
+    "sourceMap": true,
+    "outDir": "./dist",
+    "strict": true,
+    "isolatedModules": true,
+    "importsNotUsedAsValues": "error",
+    "incremental": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "downlevelIteration": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types", "./typeings"]
+  },
+  "exclude": ["dist"]
+}
